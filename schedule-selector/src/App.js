@@ -11,13 +11,8 @@ class App extends React.Component {
 
   handleChange = newSchedule => {
     this.setState({ schedule: newSchedule })
-    axios({
-      method: 'post',
-      url: url,
-      data: {
-        newSchedule
-      }
-    })
+    axios.post(url, {calendar: newSchedule}, {
+      headers: {'Content-Type': 'application/json'}})
     .then(data => alert(data))
     .catch(err => alert(err))
   }

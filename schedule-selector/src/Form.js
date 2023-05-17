@@ -159,7 +159,7 @@ const Form = ({schedule}) => {
         }
         return 0;
     });
-    
+
     var res = {
         calendar: combinedArray,
         phoneNum: phoneNumber,

@@ -4,9 +4,9 @@ import React from 'react';
 import Form from './Form';
 
 class App extends React.Component {
-  state = { schedule : [] }
+  state = { schedule : [], phoneNum : '', maxHangouts : '', daysInAdvance : ''}
 
-  handleChange = newSchedule => {
+  handleScheduleChange = newSchedule => {
     this.setState({ schedule: newSchedule })
   }
 

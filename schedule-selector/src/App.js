@@ -21,7 +21,7 @@ class App extends React.Component {
   handleClick() {
     axios.post(url, {calendar: this.state.schedule, phoneNum : this.state.phoneNum, maxHangouts : this.state.maxHangouts, daysInAdvance : this.state.daysInAdvance}, {
       headers: {'Content-Type': 'application/json'}})
-    .then(data => alert(data))
+    .then(data => alert("successfully sent your availability! get excited for some fun plans coming your way!"))
     .catch(err => alert(err))
   }
 
@@ -65,7 +65,7 @@ class App extends React.Component {
          <br></br>
          <button onClick={this.handleClick.bind(this)}>
           Save
-        </button>ç
+        </button>
       </div>
     )
   }

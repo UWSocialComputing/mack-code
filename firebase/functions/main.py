@@ -3,6 +3,7 @@
 # Deploy with `firebase deploy`
 
 import os
+import json 
 import dateutil.parser
 import google.cloud.firestore
 
@@ -16,15 +17,18 @@ from datetime import timedelta
 
 cred = credentials.ApplicationDefault()
 app = initialize_app(cred)
+
 twilio_phone_num = '+18336857181'
 
+[{'month': 5, 'day': 19, 'dayOfWeek': 5, 'startTime': '11:0', 'duration': 300, 'endTime': '16:0'}]
 
-class Availability:
-    def __init__(self, month, day, day_of_week, time, duration):
+class PlanTimeInterval:
+    def __init__(self, month, day, dayOfWeek, startTime, endTime, duration):
         self.month = month 
         self.day = day
-        self.day_of_week = day_of_week
-        self.time = time
+        self.dayOfWeek = dayOfWeek
+        self.startTime = startTime
+        self.endTime = endTime
         self.duration = duration
     
     def __str__(self):
@@ -35,25 +39,25 @@ class Availability:
 def getPlans(req: https_fn.Request) -> https_fn.Response:
     json_data = req.get_json()
     if json_data:
-        calendar = [dateutil.parser.parse(entry) for entry in json_data['calendar']]
-        calendar.sort()
+        planTimeIntervals = [PlanTimeInterval(month=entry['month'], day=entry['day'], dayOfWeek=entry['dayOfWeek'], startTime=entry['startTime'], endTime=entry['endTime'], duration=entry['duration']) for entry in json_data['calendar']]
         phoneNum = json_data['phoneNum']
         maxHangouts = json_data['maxHangouts']
         daysInAdvance = json_data['daysInAdvance']
         print(phoneNum)
         print(maxHangouts)
         print(daysInAdvance)
-        print(calendar)
+        print(planTimeIntervals)
         
         
     return https_fn.Response("hello world")
-        
-    #account_sid = os.environ['TWILIO_ACCOUNT_SID']
-    #auth_token = os.environ['TWILIO_AUTH_TOKEN']
-    #twilio_client = Client(account_sid, auth_token)
     
 
     #firestore_client = firestore.client()
+
+    # twilio setup
+    #account_sid = os.environ['TWILIO_ACCOUNT_SID']
+    #auth_token = os.environ['TWILIO_AUTH_TOKEN']
+    #twilio_client = Client(account_sid, auth_token)
 
     # Get all the activities in the db
     # once we implement tagging/have actual entries we can use .where() to filter for specific entries
@@ -68,7 +72,7 @@ def getPlans(req: https_fn.Request) -> https_fn.Response:
     #message = twilio_client.messages.create(
     #    body=output,
     #    from_=twilio_phone_num,
-    #    to='+12065579398'
+    #    to=phoneNum
     #)
     
     # we should map out what we want the response to look like with success/failure etc

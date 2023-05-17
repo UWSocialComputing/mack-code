@@ -6,23 +6,21 @@ import Form from './Form';
 class App extends React.Component {
   state = { schedule : [], phoneNum : '', maxHangouts : '', daysInAdvance : ''}
 
-  handleScheduleChange = newSchedule => {
+  handleChange = newSchedule => {
     this.setState({ schedule: newSchedule })
   }
 
   render() {
     return (
-      <><ScheduleSelector
+      <div><ScheduleSelector
         selection={this.state.schedule}
         numDays={14}
         minTime={8}
         maxTime={22}
         hourlyChunks={2}
         onChange={this.handleChange} />
-        <div>
-          <Form schedule={this.state.schedule} />
-        </div>
-      </>
+        <Form schedule={this.state.schedule} />
+      </div>
     )
   }
 }

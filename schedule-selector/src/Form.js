@@ -5,7 +5,8 @@ const url='http://127.0.0.1:5001/friendstomeet-155ac/us-central1/getPlans'
 
 const Form = ({schedule}) => {
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [numberValue, setNumberValue] = useState(1);
+  const [maxHangoutValue, setMaxHangoutValue] = useState(1);
+  const [daysInAdvanceValue, setDaysInAdvanceValue] = useState(1);
   const [phoneNumberError, setPhoneNumberError] = useState('');
 
   const handlePhoneNumberChange = (e) => {
@@ -23,16 +24,39 @@ const Form = ({schedule}) => {
       value = 1;
     }
 
-    setNumberValue(value);
+    setMaxHangoutValue(value);
   };
 
   const handleNumberIncrement = () => {
-    setNumberValue((prevValue) => prevValue + 1);
+    setMaxHangoutValue((prevValue) => prevValue + 1);
   };
 
   const handleNumberDecrement = () => {
-    if (numberValue > 1) {
-      setNumberValue((prevValue) => prevValue - 1);
+    if (maxHangoutValue > 1) {
+      setMaxHangoutValue((prevValue) => prevValue - 1);
+    }
+  };
+
+  const handleDaysChange = (e) => {
+    let { value } = e.target;
+    value = parseInt(value);
+
+    if (isNaN(value)) {
+        value = 1;
+    } else if (value < 1) {
+        value = 1;
+    }
+
+    setDaysInAdvanceValue(value);
+  }
+
+  const handleDaysIncrement = () => {
+    setDaysInAdvanceValue((prevValue) => prevValue + 1);
+  };
+
+  const handleDaysDecrement = () => {
+    if (daysInAdvanceValue > 1) {
+      setDaysInAdvanceValue((prevValue) => prevValue - 1);
     }
   };
 
@@ -69,7 +93,8 @@ const Form = ({schedule}) => {
 
     // Handle form submission
     console.log('Phone Number:', phoneNumber);
-    console.log('Number Value:', numberValue);
+    console.log('Number Value:', maxHangoutValue);
+    console.log('Days In Advance:', daysInAdvanceValue);
 
     schedule.sort();
     const convertedArray = [];
@@ -134,22 +159,21 @@ const Form = ({schedule}) => {
         }
         return 0;
     });
+    
     var res = {
-        calendar: combinedArray.slice(0, Math.min(numberValue, combinedArray.length)),
-        phoneNumber: phoneNumber,
-        numPlans: numberValue
-    }
-    axios.post(url, res)
-    .then((response) => {
-        console.log('Response:', response.data);
-        alert('Form submitted successfully');
-    })
-    .catch((error) => {
-        console.log('Error:', error);
-    })
+        calendar: combinedArray,
+        phoneNum: phoneNumber,
+        maxHangouts: maxHangoutValue,
+        daysInAdvance: daysInAdvanceValue
+    };
+
+    axios.post(url, res, {headers: {'Content-Type': 'application/json'}})
+    .then(data => alert("successfully sent your availability! get excited for some fun plans coming your way!"))
+    .catch(err => alert(err))
+
     // Reset form
     setPhoneNumber('');
-    setNumberValue(1);
+    setMaxHangoutValue(1);
     setPhoneNumberError('');
   };
 
@@ -168,12 +192,12 @@ const Form = ({schedule}) => {
       </div>
 
       <div>
-        <label htmlFor="numberValue">Up to how many plans would you want to receive? :</label>
+        <label htmlFor="maxHangoutValue">Up to how many plans would you want to receive? :</label>
         <input
           type="number"
-          id="numberValue"
-          name="numberValue"
-          value={numberValue}
+          id="maxHangoutValue"
+          name="maxHangoutValue"
+          value={maxHangoutValue}
           onChange={handleNumberChange}
         />
         <button type="button" onClick={handleNumberIncrement}>
@@ -183,7 +207,22 @@ const Form = ({schedule}) => {
           -
         </button>
       </div>
-
+      <div>
+        <label htmlFor="daysInAdvance">What's the minimum number of days you want to receive a plan's notice? </label>
+        <input
+          type="number"
+          id="daysInAdvance"
+          name="daysInAdvance"
+          value={daysInAdvanceValue}
+          onChange={handleDaysChange}
+        />
+        <button type="button" onClick={handleDaysIncrement}>
+          +
+        </button>
+        <button type="button" onClick={handleDaysDecrement}>
+          -
+        </button>
+      </div>
       <button type="submit">Submit</button>
     </form>
   );

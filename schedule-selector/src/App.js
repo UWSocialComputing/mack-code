@@ -2,9 +2,6 @@ import ScheduleSelector from 'react-schedule-selector'
 import './App.css';
 import React from 'react';
 import Form from './Form';
-import axios from 'axios';
-
-const url='http://127.0.0.1:5001/friendstomeet-155ac/us-central1/getPlans'
 
 class App extends React.Component {
   state = { schedule : [] }

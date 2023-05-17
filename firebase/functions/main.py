@@ -18,6 +18,7 @@ cred = credentials.ApplicationDefault()
 app = initialize_app(cred)
 twilio_phone_num = '+18336857181'
 
+
 class Availability:
     def __init__(self, month, day, day_of_week, time, duration):
         self.month = month 
@@ -30,33 +31,22 @@ class Availability:
         return str(self.month) + " " + str(self.day) + " " + str(self.day_of_week) + " " + str(self.time) + " " + str(self.duration)
 
 
-
 @https_fn.on_request(cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post"]))
 def getPlans(req: https_fn.Request) -> https_fn.Response:
     json_data = req.get_json()
-    output = ""
     if json_data:
         calendar = [dateutil.parser.parse(entry) for entry in json_data['calendar']]
         calendar.sort()
-        start_time = calendar[0]
-        i = 1
-        availabilities = []
-        while i < len(calendar):
-            diff = calendar[i] - start_time
-            while(i < len(calendar) and diff.total_seconds() == 1800):
-                diff = calendar[i] - start_time
-                i += 1
-            
-            i += 1
-            availability = Availability(month=start_time.month, day=start_time.day, day_of_week=start_time.weekday(), time=(str(start_time.hour) + ":" + str(start_time.min).zfill(2)), duration=diff.total_seconds() / 60)
-            availabilities.append(availability)
+        phoneNum = json_data['phoneNum']
+        maxHangouts = json_data['maxHangouts']
+        daysInAdvance = json_data['daysInAdvance']
+        print(phoneNum)
+        print(maxHangouts)
+        print(daysInAdvance)
+        print(calendar)
         
-        availabilities.append(Availability(month=start_time.month, day=start_time.day, day_of_week=start_time.weekday(), time=(str(start_time.hour) + ":" + str(start_time.min).zfill(2)), duration=diff.total_seconds() / 60))        
         
-        for availability in availabilities:
-            print(availability)
-        
-    return https_fn.Response(output)
+    return https_fn.Response("hello world")
         
     #account_sid = os.environ['TWILIO_ACCOUNT_SID']
     #auth_token = os.environ['TWILIO_AUTH_TOKEN']

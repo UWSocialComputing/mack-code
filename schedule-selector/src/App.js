@@ -2,63 +2,24 @@ import ScheduleSelector from 'react-schedule-selector'
 import './App.css';
 import React from 'react';
 import axios from 'axios'
+/*
+axios.post(url, {calendar: newSchedule}, {
+  headers: {'Content-Type': 'application/json'}})
+.then(data => alert(data))
+.catch(err => alert(err))
+*/
 
 const url='http://127.0.0.1:5001/friendstomeet-155ac/us-central1/getPlans'
 
-function SaveButton() {
-  function handleClick() {
-    alert('You clicked me!');
-  }
-
-  return (
-    <button onClick={handleClick}>
-      Save
-    </button>
-  );
-}
-
-function PhoneButton() {
-  function handleClick() {
-    alert('You clicked me!');
-  }
-
-  return (
-    <button onClick={handleClick}>
-      Save
-    </button>
-  );
-}
-
-function NumNotifButton() {
-  function handleClick() {
-    alert('You clicked me!');
-  }
-
-  return (
-    <button onClick={handleClick}>
-      Save
-    </button>
-  );
-}
-
-function DaysNotifButton() {
-  function handleClick() {
-    alert('You clicked me!');
-  }
-
-  return (
-    <button onClick={handleClick}>
-      Save
-    </button>
-  );
-}
-
 class App extends React.Component {
-  state = { schedule : [] }
+  state = { schedule : [], phoneNum : '', maxHangouts : '', daysInAdvance : ''}
 
-  handleChange = newSchedule => {
+  handleScheduleChange = newSchedule => {
     this.setState({ schedule: newSchedule })
-    axios.post(url, {calendar: newSchedule}, {
+  }
+
+  handleClick() {
+    axios.post(url, {calendar: this.state.schedule, phoneNum : this.state.phoneNum, maxHangouts : this.state.maxHangouts, daysInAdvance : this.state.daysInAdvance}, {
       headers: {'Content-Type': 'application/json'}})
     .then(data => alert(data))
     .catch(err => alert(err))
@@ -75,33 +36,36 @@ class App extends React.Component {
         minTime={8}
         maxTime={22}
         hourlyChunks={2}
-        onChange={this.handleChange}
+        onChange={this.handleScheduleChange}
       />
-      <SaveButton />
-      <body> Enter your phone number: </body>
+      <body> Enter your phone number:</body> 
       <input
-            id = "phone"
-            label = "phone"
-            type="text"
-            value={this.state.value}
-         />
-      <PhoneButton />
-      <body> Enter number of times you would like to be notified of a hangout: </body>
-      <input
+          id = "phone"
+          label = "phone"
+          type="text"
+          value={this.state.phoneNum}
+          onChange={e => this.setState({phoneNum: e.target.value})}
+        />
+        <body> Enter the number of plans you would like to be notified of:</body>
+        <input
             id = "numnotif"
             label = "numnotif"
             type="text"
-            value={this.state.value}
+            value={this.state.maxHangouts}
+            onChange={e => this.setState({maxHangouts: e.target.value})}
          />
-      <NumNotifButton />
       <body> Enter number of days in advance you would like to be notified: </body>
       <input
             id = "daysnotif"
             label = "daysnotif"
             type="text"
-            value={this.state.value}
+            value={this.state.daysInAdvance}
+            onChange={e => this.setState({daysInAdvance: e.target.value})}
          />
-      <DaysNotifButton />
+         <br></br>
+         <button onClick={this.handleClick.bind(this)}>
+          Save
+        </button>ç
       </div>
     )
   }

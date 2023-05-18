@@ -2,8 +2,8 @@
 # To get started, simply uncomment the below code or create your own.
 # Deploy with `firebase deploy`
 
-import os
 import google.cloud.firestore
+import os
 
 # The Cloud Functions for Firebase SDK to create Cloud Functions and set up triggers.
 from firebase_functions import https_fn, options
@@ -40,13 +40,12 @@ class PlanTimeInterval:
 def getPlans(req: https_fn.Request) -> https_fn.Response:
     json_data = req.get_json()
     if json_data:
-        firestore_client = firestore.client()
+        firestore_client: google.cloud.firestore.Client = firestore.client()
         activities_ref = firestore_client.collection('activities')
         planTimeIntervals = [PlanTimeInterval(month=entry['month'], day=entry['day'], dayOfWeek=entry['dayOfWeek'], startTime=entry['startTime'], endTime=entry['endTime'], duration=entry['duration'], startTimeMinutes=entry['startTimeMinutes'], endTimeMinutes=entry['startTimeMinutes']) for entry in json_data['calendar']]
         phoneNum = json_data['phoneNum']
         maxHangouts = json_data['maxHangouts']
-        daysInAdvance = json_data['daysInAdvance']
-        output = "hello"
+        output = "here are some plans for this week: \n"
 
         intervalsForPlans = sorted(planTimeIntervals, key=lambda x: x.duration, reverse=True)
         i = 0
@@ -55,12 +54,9 @@ def getPlans(req: https_fn.Request) -> https_fn.Response:
             if i == maxHangouts:
                 break
             
-            #results = firestore_client.collection(u'activities').stream()
-            #results = activities_ref.where('StartTime', '<=', interval.startTime).where('EndTime', '>=', interval.endTime).where('MaxDuration', '>=', interval.duration).where('MinDuration', '<=', interval.duration).limit(1).stream()
-            results = activities_ref.where('StartMinuteTime', '<=', interval.startTimeMinutes).where('EndMinuteTime', '>=', interval.endTimeMinutes).where('MaxDuration', '>=', interval.duration).where('MinDuration', '<=', interval.duration).stream()
+            results = activities_ref.where('StartMinuteTime', '<=', interval.startTimeMinutes).limit(1).stream()
 
             for result in results:
-                output += interval.startTime + ": \n" 
                 output += result.to_dict()["Description"] + "\n \n"
                 i+= 1
                 

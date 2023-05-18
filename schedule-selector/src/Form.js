@@ -72,7 +72,9 @@ const Form = ({schedule}) => {
             'dayOfWeek': t1.dayOfWeek,
             'startTime' : t1.startTime,
             'duration' : t1.duration + t2.duration,
-            'endTime' : t2.endTime
+            'endTime' : t2.endTime,
+            'startTimeMinutes' : t1.startTimeMinutes,
+            'endTimeMinutes' : t2.endTimeMinutes
         };
     else
         return null;
@@ -107,7 +109,7 @@ const Form = ({schedule}) => {
         const duration = 30;
         const endDate = new Date(date.getTime() + duration*60000);
         const endTime = `${endDate.getHours()}:${endDate.getMinutes()}`;
-        const startTimeMinues = date.getHours() * 60 + date.getMinutes();
+        const startTimeMinutes = date.getHours() * 60 + date.getMinutes();
         const endTimeMinutes = endDate.getHours() * 60 + endDate.getMinutes();
         convertedArray.push ( {
             'month': month,
@@ -116,7 +118,7 @@ const Form = ({schedule}) => {
             'startTime' : startTime,
             'duration' : duration,
             'endTime' : endTime,
-            'startTimeMinues' : startTimeMinues,
+            'startTimeMinutes' : startTimeMinutes,
             'endTimeMinutes' : endTimeMinutes
         });
     }

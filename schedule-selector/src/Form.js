@@ -107,13 +107,17 @@ const Form = ({schedule}) => {
         const duration = 30;
         const endDate = new Date(date.getTime() + duration*60000);
         const endTime = `${endDate.getHours()}:${endDate.getMinutes()}`;
+        const startTimeMinues = date.getHours() * 60 + date.getMinutes();
+        const endTimeMinutes = endDate.getHours() * 60 + endDate.getMinutes();
         convertedArray.push ( {
             'month': month,
             'day': day,
             'dayOfWeek': dayOfWeek,
             'startTime' : startTime,
             'duration' : duration,
-            'endTime' : endTime
+            'endTime' : endTime,
+            'startTimeMinues' : startTimeMinues,
+            'endTimeMinutes' : endTimeMinutes
         });
     }
     convertedArray.sort(function(x, y) {

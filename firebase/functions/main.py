@@ -54,11 +54,14 @@ def getPlans(req: https_fn.Request) -> https_fn.Response:
             if i == maxHangouts:
                 break
             
-            results = activities_ref.where('StartMinuteTime', '<=', interval.startTimeMinutes).limit(1).stream()
+            results = activities_ref.where('StartMinuteTime', '<=', interval.startTimeMinutes).stream()
 
             for result in results:
-                output += result.to_dict()["Description"] + "\n \n"
-                i+= 1
+                description = result.to_dict()["Description"] + "\n \n"
+                if description not in output:
+                    output += description
+                    i+= 1
+                    break
                 
         
         twilio_client = Client(account_sid, auth_token)

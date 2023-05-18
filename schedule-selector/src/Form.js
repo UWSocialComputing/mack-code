@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 
-const url='http://127.0.0.1:5001/friendstomeet-155ac/us-central1/getPlans'
+const url='https://getplans-7g4ibqksta-uc.a.run.app/'
 
 const Form = ({schedule}) => {
   const [phoneNumber, setPhoneNumber] = useState('');

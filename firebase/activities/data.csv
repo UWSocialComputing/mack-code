@@ -1,0 +1,45 @@
+Activity Name	Description	VirtualFriendly	IndoorFriendly	OutdoorFriendly	Expense	StartTime	EndTime	MinDuration	MaxDuration	MinPeople	MaxPeople
+Art Jamming Session	Let your creativity flow and express yourself through art in a relaxed and fun session.	TRUE	TRUE	TRUE	2	10:00 AM	1:00 PM	90	180	2	6
+Art Workshop	Unleash your creativity and learn various art techniques in a guided workshop.	TRUE	TRUE	FALSE	3	2:00 PM	8:00 PM	90	180	2	6
+Beach Day	Soak up the sun, swim in the ocean, and enjoy a relaxing day at the beach.	FALSE	FALSE	TRUE	2	10:00 AM	10:00 PM	210	420	2	8
+Board Game Night	Gather around and engage in friendly competition with a variety of board games.	TRUE	TRUE	FALSE	1	6:00 PM	11:00 PM	120	240	2	8
+Book Club	Start a book club and engage in insightful discussions about literature.	TRUE	TRUE	FALSE	1	Any	Any	60	120	2	8
+Bowling Night	Have a blast and test your bowling skills in a friendly competition with friends.	FALSE	TRUE	FALSE	2	6:00 PM	10:00 PM	90	150	2	6
+Brunch	Indulge in a delightful brunch experience with a variety of delicious dishes and refreshing drinks.	FALSE	TRUE	FALSE	3	10:00 AM	2:00 PM	60	120	2	8
+Comedy Show	Laugh your hearts out and enjoy a hilarious comedy show with your friends.	TRUE	TRUE	FALSE	3	7:00 PM	9:00 PM	60	120	2	8
+Cooking Class	Learn to cook delicious dishes under the guidance of professional chefs.	TRUE	TRUE	FALSE	3	4:00 PM	7:00 PM	90	180	2	6
+Dance Party	Groove to your favorite tunes and have a dance party together out on the town.	TRUE	TRUE	FALSE	1	8:00 PM	12:00 AM	60	120	2	8
+Dinner	Treat yourself to a delicious dinner at a local restaurant	FALSE	TRUE	FALSE	3	6:00 PM	10:00 PM	60	180	2	8
+DIY Craft Workshop	Get crafty and create personalized crafts in a hands-on DIY workshop.	TRUE	TRUE	FALSE	2	2:00 PM	5:00 PM	90	180	2	6
+Escape Room Challenge	Work together to solve puzzles and escape from a thrilling escape room scenario.	FALSE	TRUE	FALSE	3	Any	Any	60	120	2	8
+Food Tasting Tour	Embark on a culinary journey and sample delicious foods from various local eateries.	FALSE	TRUE	TRUE	3	11:00 AM	3:00 PM	120	180	4	8
+Game Night	Play a variety of classic and modern games for a fun-filled evening with friends.	TRUE	TRUE	FALSE	2	6:00 PM	11:00 PM	120	240	2	8
+Hiking Adventure	Explore scenic trails, breathe fresh air, and enjoy the beauty of nature.	FALSE	FALSE	TRUE	1	9:00 AM	4:00 PM	120	240	2	6
+Indoor Ice Skating	Glide on the ice and have a fun-filled time ice skating with your friends.	FALSE	TRUE	FALSE	3	2:00 PM	6:00 PM	90	150	2	6
+Indoor Rock Climbing	Challenge yourselves and experience the thrill of indoor rock climbing.	FALSE	TRUE	FALSE	4	10:00 AM	6:00 PM	60	120	2	6
+Indoor Trampoline Park	Bounce and have a blast with your friends at an indoor trampoline park.	FALSE	TRUE	FALSE	3	10:00 AM	5:00 PM	60	120	2	6
+Karaoke Night	Sing your hearts out and enjoy a fun-filled night of karaoke with your friends.	TRUE	TRUE	FALSE	2	7:00 PM	11:00 PM	60	120	2	8
+Kayaking	Enjoy a thrilling kayaking adventure on a nearby river or lake	FALSE	FALSE	TRUE	3	8:00 AM	6:00 PM	90	240	2	6
+Laser Tag	Experience the excitement of laser tag in an indoor arena	FALSE	TRUE	FALSE	3	12:00 PM	10:00 PM	60	120	2	8
+Mini Golf	Have a friendly competition and putt your way through a mini golf course.	FALSE	TRUE	TRUE	3	11:00 AM	7:00 PM	90	150	2	6
+Movie Marathon	Get cozy and binge-watch your favorite movies or series with your friends.	TRUE	TRUE	FALSE	1	Any	Any	180	360	2	8
+Movie Night Under the Stars	Set up a cozy outdoor movie night with a projector and enjoy films under the stars.	FALSE	FALSE	TRUE	3	8:00 PM	11:00 PM	120	180	4	10
+Outdoor Adventure Hike	Embark on an adventurous hike and explore nature's wonders along the trails.	FALSE	FALSE	TRUE	2	8:00 AM	1:00 PM	120	240	2	6
+Outdoor Adventure Park	Challenge yourselves with thrilling outdoor activities like zip-lining and rope courses.	FALSE	FALSE	TRUE	4	9:00 AM	4:00 PM	120	240	4	8
+Outdoor BBQ	Gather around the grill and enjoy a delicious barbecue feast in an outdoor setting.	FALSE	TRUE	TRUE	2	4:00 PM	8:00 PM	120	240	4	10
+Outdoor Bike Ride	Enjoy a leisurely bike ride and explore scenic paths and trails together.	FALSE	FALSE	TRUE	1	9:00 AM	12:00 PM	90	150	2	6
+Outdoor Concert	Enjoy live music and experience the excitement of an outdoor concert with your friends.	FALSE	FALSE	TRUE	3	6:00 PM	11:00 PM	120	240	4	10
+Outdoor Sports Day	Engage in friendly sports activities such as soccer, volleyball, or frisbee.	FALSE	FALSE	TRUE	1	10:00 AM	4:00 PM	120	240	4	10
+Outdoor Yoga Session	Relax and rejuvenate with a peaceful yoga session amidst nature's beauty.	FALSE	FALSE	TRUE	1	8:00 AM	10:00 AM	60	90	2	6
+Paint and Sip	Unleash your inner artist while enjoying a glass of wine in a casual painting session.	TRUE	TRUE	FALSE	3	6:00 PM	9:00 PM	90	180	2	6
+Paintball	Engage in an adrenaline-pumping paintball battle with your friends	FALSE	TRUE	TRUE	4	10:00 AM	6:00 PM	120	240	4	10
+Picnic in the Park	Enjoy a relaxing picnic with delicious food, drinks, and good company.	FALSE	TRUE	TRUE	2	11:00 AM	4:00 PM	120	180	2	8
+Potluck Picnic	Bring your favorite dishes to share and enjoy a delicious outdoor picnic.	FALSE	TRUE	TRUE	2	11:00 AM	4:00 PM	120	180	4	10
+Scavenger Hunt	Embark on an exciting adventure and solve clues to complete a thrilling scavenger hunt.	FALSE	TRUE	TRUE	2	Any	Any	120	240	4	10
+Spa Day	Relax and rejuvenate with spa treatments and pampering	FALSE	TRUE	FALSE	5	10:00 AM	6:00 PM	120	360	2	6
+Strolling through a Park	Take a leisurely walk through a nearby park and enjoy nature's beauty	FALSE	FALSE	TRUE	1	Any	Any	30	120	2	10
+Trivia Night	Test your knowledge and compete with your friends in an exciting trivia challenge.	TRUE	TRUE	FALSE	2	7:00 PM	9:00 PM	60	120	2	8
+Video Game Night	Enjoy a fun-filled evening playing video games with friends	TRUE	TRUE	FALSE	2	6:00 PM	2:00 AM	120	360	2	8
+Visit a local museum	Explore the exhibits and learn about art, history, or science	FALSE	TRUE	FALSE	2	10:00 AM	5:00 PM	90	240	2	8
+Wine and Cheese Tasting	Delight your taste buds with a sophisticated wine and cheese tasting experience.	FALSE	TRUE	FALSE	4	5:00 PM	8:00 PM	90	150	2	6
+Yoga Class	Join a yoga class and experience the benefits of mindfulness and relaxation.	TRUE	TRUE	FALSE	2	Any	Any	60	90	2	8

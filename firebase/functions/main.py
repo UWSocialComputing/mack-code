@@ -34,7 +34,10 @@ class PlanTimeInterval:
     
     def __str__(self):
         return str(self.month) + " " + str(self.day) + " " + str(self.day_of_week) + " " + str(self.time) + " " + str(self.duration)
-
+    
+    def planStr(self): 
+        return "Looks like you're free on " + str(self.month) + "/" + str(self.day) + " from " + str(self.startTime) + " to " + str(self.endTime)
+        + ". Here's an idea for what to do with some friends. "
 
 @https_fn.on_request(cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post"]))
 def getPlans(req: https_fn.Request) -> https_fn.Response:
@@ -59,10 +62,9 @@ def getPlans(req: https_fn.Request) -> https_fn.Response:
             for result in results:
                 description = result.to_dict()["Description"] + "\n \n"
                 if description not in output:
-                    output += description
+                    output += interval.planStr + "\n* " + result.to_dict()["Activity Name"] + description
                     i+= 1
-                    break
-                
+                    break                
         
         twilio_client = Client(account_sid, auth_token)
         twilio_client.messages.create(body=output,from_=twilio_phone_num,to=phoneNum)

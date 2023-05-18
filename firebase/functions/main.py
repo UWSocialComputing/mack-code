@@ -3,17 +3,22 @@
 # Deploy with `firebase deploy`
 
 import os
-#import google.cloud.firestore
+import csv
+import google.cloud.firestore
 
 # The Cloud Functions for Firebase SDK to create Cloud Functions and set up triggers.
-from firebase_functions import https_fn, options # firestore_fn
+from firebase_functions import https_fn, options, firestore_fn
 
 # The Firebase Admin SDK to access Cloud Firestore.
-from firebase_admin import initialize_app, credentials # firestore
-# from twilio.rest import Client
+from firebase_admin import initialize_app, credentials, firestore
+from twilio.rest import Client
 
 cred = credentials.ApplicationDefault()
 app = initialize_app(cred)
+
+account_sid = os.environ['TWILIO_ACCOUNT_SID']
+auth_token = os.environ['TWILIO_AUTH_TOKEN']
+
 
 twilio_phone_num = '+18336857181'
 
@@ -34,40 +39,29 @@ class PlanTimeInterval:
 def getPlans(req: https_fn.Request) -> https_fn.Response:
     json_data = req.get_json()
     if json_data:
+        firestore_client = firestore.client()
+        activities_ref = firestore_client.collection('activities')
+
         planTimeIntervals = [PlanTimeInterval(month=entry['month'], day=entry['day'], dayOfWeek=entry['dayOfWeek'], startTime=entry['startTime'], endTime=entry['endTime'], duration=entry['duration']) for entry in json_data['calendar']]
         phoneNum = json_data['phoneNum']
         maxHangouts = json_data['maxHangouts']
         daysInAdvance = json_data['daysInAdvance']
-        print(phoneNum)
-        print(maxHangouts)
-        print(daysInAdvance)
-        print(planTimeIntervals)
+
+        intervalsForPlans = sorted(planTimeIntervals, key=lambda x: x.duration, reverse=True)
+        output = ""
+        i = 0
+
+        for interval in intervalsForPlans:
+            if i == maxHangouts:
+                break
+    
+            results = activities_ref.where('StartTime', '<=', interval.startTime).where('EndTime', '>=', interval.endTime).where('MaxDuration', '>=', interval.duration).where('MinDuration', '<=', interval.duration).stream()
+
+            if len(results) > 0:
+                output += results[0].to_dict()["Description"] + "\n"
+                i+= 1
         
-        
+        twilio_client = Client(account_sid, auth_token)
+        message = twilio_client.messages.create(body=output,from_=twilio_phone_num,to=phoneNum)
+   
     return https_fn.Response("hello world")
-    
-
-    #firestore_client = firestore.client()
-
-    # twilio setup
-    #account_sid = os.environ['TWILIO_ACCOUNT_SID']
-    #auth_token = os.environ['TWILIO_AUTH_TOKEN']
-    #twilio_client = Client(account_sid, auth_token)
-
-    # Get all the activities in the db
-    # once we implement tagging/have actual entries we can use .where() to filter for specific entries
-    #results = firestore_client.collection(u'activities').stream()
-
-    # build the message we send to the user
-    #output = ""
-    #for result in results:
-    #    output += result.to_dict()["description"]
-    
-    # send the messaage 
-    #message = twilio_client.messages.create(
-    #    body=output,
-    #    from_=twilio_phone_num,
-    #    to=phoneNum
-    #)
-    
-    # we should map out what we want the response to look like with success/failure etc

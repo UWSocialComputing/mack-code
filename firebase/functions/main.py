@@ -3,24 +3,19 @@
 # Deploy with `firebase deploy`
 
 import os
-import json 
-import dateutil.parser
-import google.cloud.firestore
+#import google.cloud.firestore
 
 # The Cloud Functions for Firebase SDK to create Cloud Functions and set up triggers.
-from firebase_functions import firestore_fn, https_fn, options
+from firebase_functions import https_fn, options # firestore_fn
 
 # The Firebase Admin SDK to access Cloud Firestore.
-from firebase_admin import initialize_app, firestore, credentials
-from twilio.rest import Client
-from datetime import timedelta
+from firebase_admin import initialize_app, credentials # firestore
+# from twilio.rest import Client
 
 cred = credentials.ApplicationDefault()
 app = initialize_app(cred)
 
 twilio_phone_num = '+18336857181'
-
-[{'month': 5, 'day': 19, 'dayOfWeek': 5, 'startTime': '11:0', 'duration': 300, 'endTime': '16:0'}]
 
 class PlanTimeInterval:
     def __init__(self, month, day, dayOfWeek, startTime, endTime, duration):

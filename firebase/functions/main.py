@@ -16,8 +16,8 @@ from twilio.rest import Client
 cred = credentials.ApplicationDefault()
 app = initialize_app(cred)
 
-account_sid = os.environ['TWILIO_ACCOUNT_SID']
-auth_token = os.environ['TWILIO_AUTH_TOKEN']
+account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
+auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
 
 
 twilio_phone_num = '+18336857181'
@@ -47,6 +47,8 @@ def getPlans(req: https_fn.Request) -> https_fn.Response:
         maxHangouts = json_data['maxHangouts']
         daysInAdvance = json_data['daysInAdvance']
 
+        print(planTimeIntervals[0].startTime)
+
         intervalsForPlans = sorted(planTimeIntervals, key=lambda x: x.duration, reverse=True)
         output = ""
         i = 0
@@ -55,10 +57,11 @@ def getPlans(req: https_fn.Request) -> https_fn.Response:
             if i == maxHangouts:
                 break
     
-            results = activities_ref.where('StartTime', '<=', interval.startTime).where('EndTime', '>=', interval.endTime).where('MaxDuration', '>=', interval.duration).where('MinDuration', '<=', interval.duration).stream()
+            # results = activities_ref.where('StartTime', '<=', interval.startTime).where('EndTime', '>=', interval.endTime).where('MaxDuration', '>=', interval.duration).where('MinDuration', '<=', interval.duration).limit(1).stream()
+            results = activities_ref.where('StartTime', '=', interval.startTime).where('EndTime', '>=', interval.endTime).where('MaxDuration', '>=', interval.duration).where('MinDuration', '<=', interval.duration).limit(1).stream()
 
-            if len(results) > 0:
-                output += results[0].to_dict()["Description"] + "\n"
+            for result in results:
+                output += result.to_dict()["Description"] + "\n"
                 i+= 1
         
         twilio_client = Client(account_sid, auth_token)

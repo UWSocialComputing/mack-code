@@ -11,14 +11,7 @@ import 'firebase/auth';
 import 'firebase/database';
 
 const config = {
-    apiKey: "AIzaSyCQsOy3VhyKE0ymS_Uf3zJ6UYy2ZX29S8c",
-    authDomain: "friendstomeet-155ac.firebaseapp.com",
-    databaseURL: "https://friendstomeet-155ac-default-rtdb.firebaseio.com",
-    projectId: "friendstomeet-155ac",
-    storageBucket: "friendstomeet-155ac.appspot.com",
-    messagingSenderId: "675657641698",
-    appId: "1:675657641698:web:349bee034a9d10a63378bb",
-    measurementId: "G-R9YBFJ9N0X"
+    
 };
 
 export function getFirebaseConfig() {

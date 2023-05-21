@@ -40,6 +40,28 @@ class PlanTimeInterval:
         + ". Here's an idea for what to do with some friends. "
 
 @https_fn.on_request(cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post"]))
+def addFriend(req: https_fn.Request) -> https_fn.Response:
+    json_data = req.get_json()
+    if json_data:
+        user = json_data['username']
+        newFriend = json_data['newFriend']
+
+        firestore_client: google.cloud.firestore.Client = firestore.client()
+        user_ref = firestore_client.collection('users').document(user)
+        doc = user_ref.get()
+        if doc.exists:
+            friends = doc.to_dict().get('friends', [])
+            friends.append(newFriend)
+            user_ref.set({
+                'friends': friends
+            }, merge=True)
+            return https_fn.Response(f"successfully added new friend: {newFriend}")
+        else:
+            raise https_fn.HttpsError('invalid-argument', 'request improperly formatted')
+            
+
+
+@https_fn.on_request(cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post"]))
 def getPlans(req: https_fn.Request) -> https_fn.Response:
     json_data = req.get_json()
     if json_data:
@@ -57,7 +79,7 @@ def getPlans(req: https_fn.Request) -> https_fn.Response:
             if i == maxHangouts:
                 break
             
-            results = activities_ref.where('StartMinuteTime', '<=', interval.startTimeMinutes).stream()
+            results = activities_ref.where('StartMinuteTime', '<=', interval.startTimeMinutes).where('EndMinuteTime', '>=', interval.endTimeMinutes).where('MinDuration', '<=', interval.duration).where('MaxDuration', '>=', interval.duration).stream()
 
             for result in results:
                 description = result.to_dict()["Description"] + "\n \n"

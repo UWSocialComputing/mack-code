@@ -12,7 +12,8 @@ class App extends React.Component {
 
   render() {
     return (
-      <div><ScheduleSelector
+      <div>
+        <ScheduleSelector
         selection={this.state.schedule}
         numDays={14}
         minTime={8}

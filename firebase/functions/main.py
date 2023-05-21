@@ -43,7 +43,7 @@ class PlanTimeInterval:
 def addFriend(req: https_fn.Request) -> https_fn.Response:
     json_data = req.get_json()
     if json_data:
-        user = json_data['username']
+        user = json_data['user']
         newFriend = json_data['newFriend']
 
         firestore_client: google.cloud.firestore.Client = firestore.client()
@@ -58,7 +58,25 @@ def addFriend(req: https_fn.Request) -> https_fn.Response:
             return https_fn.Response(f"successfully added new friend: {newFriend}")
         else:
             raise https_fn.HttpsError('invalid-argument', 'request improperly formatted')
-            
+
+
+@https_fn.on_request(cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post"]))
+def editSettings(req: https_fn.Request) -> https_fn.Response:
+    json_data = req.get_json()
+    if json_data:
+        user = json_data['user']
+        firestore_client: google.cloud.firestore.Client = firestore.client()
+        user_ref = firestore_client.collection('users').document(user)
+        doc = user_ref.get()
+        if doc.exists:
+            for setting in ['maxPlans', 'minNotice', 'phoneNum']:
+                if setting in json_data:
+                    user_ref.set({
+                        setting: json_data[setting]
+                    }, merge=True)
+            return https_fn.Response("successfully updated settings")
+        else:
+            raise https_fn.HttpsError('invalid-argument', 'request improperly formatted')
 
 
 @https_fn.on_request(cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post"]))

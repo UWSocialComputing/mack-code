@@ -148,7 +148,7 @@ const Form = () => {
           onChange={handleDaysChange}
         />
       </div>
-      <button type="submit">Submit</button>
+      <button className="rectangle-button blue" type="submit">Submit</button>
     </form>
   );
 };

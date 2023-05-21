@@ -1,7 +1,6 @@
 import ScheduleSelector from 'react-schedule-selector'
 import './App.css';
 import React from 'react';
-import Form from './Form';
 import TimeInput from './TimeInput';
 import DateInput from './DateInput';
 
@@ -37,15 +36,15 @@ class Home extends React.Component {
         <img style={{ width: 350, height: 75 }} src={logo} alt="Logo" />
         <DateInput initialDate="2023-05-21" onDateChange={this.handleDateChange} />
         <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sunda</span>
-        <span style={{letterSpacing: 200}}>y</span>
+        <span style={{letterSpacing: 205}}>y</span>
         <span>Monda</span>
-        <span style={{letterSpacing: 190}}>y</span>
-        <span>Tuesda</span>
-        <span style={{letterSpacing: 175}}>y</span>
-        <span>Wednesda</span>
-        <span style={{letterSpacing: 175}}>y</span>
-        <span>Thursda</span>
         <span style={{letterSpacing: 195}}>y</span>
+        <span>Tuesda</span>
+        <span style={{letterSpacing: 190}}>y</span>
+        <span>Wednesda</span>
+        <span style={{letterSpacing: 180}}>y</span>
+        <span>Thursda</span>
+        <span style={{letterSpacing: 200}}>y</span>
         <span>Frida</span>
         <span style={{letterSpacing: 200}}>y</span>
         <span>Saturday</span>

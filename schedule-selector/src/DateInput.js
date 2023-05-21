@@ -6,14 +6,14 @@ const DateInput = ({ initialDate, onDateChange }) => {
 
   const handleBackward = () => {
     const newDate = new Date(startDate);
-    newDate.setDate(newDate.getDate() - 1);
+    newDate.setDate(newDate.getDate() - 7);
     setStartDate(newDate.toISOString().split('T')[0]);
     onDateChange(newDate.toISOString().split('T')[0]);
   };
 
   const handleForward = () => {
     const newDate = new Date(startDate);
-    newDate.setDate(newDate.getDate() + 1);
+    newDate.setDate(newDate.getDate() + 7);
     setStartDate(newDate.toISOString().split('T')[0]);
     onDateChange(newDate.toISOString().split('T')[0]);
   };

@@ -206,12 +206,13 @@ const Form = ({schedule}) => {
           value={maxHangoutValue}
           onChange={handleNumberChange}
         />
-        <button type="button" onClick={handleNumberIncrement}>
-          +
-        </button>
         <button type="button" onClick={handleNumberDecrement}>
           -
         </button>
+        <button type="button" onClick={handleNumberIncrement}>
+          +
+        </button>
+        
       </div>
       <div>
         <label htmlFor="daysInAdvance">What's the minimum number of days you want to receive a plan's notice? </label>
@@ -222,12 +223,13 @@ const Form = ({schedule}) => {
           value={daysInAdvanceValue}
           onChange={handleDaysChange}
         />
-        <button type="button" onClick={handleDaysIncrement}>
-          +
-        </button>
         <button type="button" onClick={handleDaysDecrement}>
           -
         </button>
+        <button type="button" onClick={handleDaysIncrement}>
+          +
+        </button>
+        
       </div>
       <button type="submit">Submit</button>
     </form>

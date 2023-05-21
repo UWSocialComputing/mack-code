@@ -3,14 +3,12 @@ import './App.css';
 import React from 'react';
 import Form from './Form';
 
-class App extends React.Component {
-  state = { schedule : [], phoneNum : '', maxHangouts : '', daysInAdvance : ''}
+class Home extends React.Component {
+  state = {schedule : []}
 
   handleChange = newSchedule => {
     this.setState({ schedule: newSchedule })
   }
-
-  // Add min time and max time as settings for user
 
   render() {
     return (
@@ -22,10 +20,9 @@ class App extends React.Component {
         maxTime={22}
         hourlyChunks={2}
         onChange={this.handleChange} />
-        <Form schedule={this.state.schedule} />
       </div>
     )
   }
 }
 
-export default App;
+export default Home;

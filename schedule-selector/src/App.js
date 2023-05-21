@@ -10,12 +10,14 @@ class App extends React.Component {
     this.setState({ schedule: newSchedule })
   }
 
+  // Add min time and max time as settings for user
+
   render() {
     return (
       <div>
         <ScheduleSelector
         selection={this.state.schedule}
-        numDays={14}
+        numDays={7}
         minTime={8}
         maxTime={22}
         hourlyChunks={2}

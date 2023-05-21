@@ -11,7 +11,7 @@ import logo from './logo.png'; // Tell webpack this JS file uses this image
 console.log(logo); // /logo.84287d09.png
 
 
-class App extends React.Component {
+class Home extends React.Component {
   state = { schedule : [], phoneNum : '', maxHangouts : '', daysInAdvance : '', start : 8, end: 22, date : '5/21/23'}
 
   handleDateChange = (date) => {
@@ -58,11 +58,10 @@ class App extends React.Component {
         hourlyChunks={2}
         onChange={this.handleChange} />
         <TimeInput onSubmit={this.handleTimeSubmit}/>
-        <Form schedule={this.state.schedule} />
         
       </div>
     )
   }
 }
 
-export default App;
+export default Home;

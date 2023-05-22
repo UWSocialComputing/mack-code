@@ -1,0 +1,19 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 5vh; /* Set the height of the container to full viewport height */
+  }
+  
+  .text-container {
+    display: flex;
+    justify-content: space-between; /* Distribute the text equally along the horizontal axis */
+    width: 100%; /* Ensure the text container takes up the full width */
+  }
+  
+  .scaling-text {
+    flex: 2; /* Allow the text elements to grow and shrink based on available space */
+    text-align: center;
+    font-size: 1vw; /* Set the font size relative to 5% of the viewport width */
+  }
+  

@@ -5,15 +5,8 @@ import UserProfile from './UserProfile'
 const url='https://getplans-7g4ibqksta-uc.a.run.app/'
 
 const Form = () => {
-  const [phoneNumber, setPhoneNumber] = useState('');
   const [maxHangoutValue, setMaxHangoutValue] = useState(1);
   const [daysInAdvanceValue, setDaysInAdvanceValue] = useState(1);
-  const [phoneNumberError, setPhoneNumberError] = useState('');
-
-  const handlePhoneNumberChange = (e) => {
-    const { value } = e.target;
-    setPhoneNumber(value);
-  };
 
   const handleNumberChange = (e) => {
     let { value } = e.target;
@@ -84,23 +77,12 @@ const Form = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!phoneNumber) {
-      setPhoneNumberError('Please enter your phone number.');
-      return;
-    }
-
-    if (!/^\d{10}$/.test(phoneNumber)) {
-      setPhoneNumberError('Please enter a valid 10-digit phone number.');
-      return;
-    }
 
     // Handle form submission
-    console.log('Phone Number:', phoneNumber);
     console.log('Number Value:', maxHangoutValue);
     console.log('Days In Advance:', daysInAdvanceValue);
 
     var res = {
-        phoneNum: phoneNumber,
         maxHangouts: maxHangoutValue,
         daysInAdvance: daysInAdvanceValue
     };
@@ -110,25 +92,11 @@ const Form = () => {
     .catch(err => alert(err))
 
     // Reset form
-    setPhoneNumber('');
     setMaxHangoutValue(1);
-    setPhoneNumberError('');
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="phoneNumber">What is your Phone Number:</label>
-        <input
-          type="text"
-          id="phoneNumber"
-          name="phoneNumber"
-          value={phoneNumber}
-          onChange={handlePhoneNumberChange}
-        />
-        {phoneNumberError && <p>{phoneNumberError}</p>}
-      </div>
-
       <div>
         <label htmlFor="maxHangoutValue">Up to how many plans would you want to receive? :</label>
         <input
@@ -156,10 +124,8 @@ const Form = () => {
 
 function Profile() {
     return (
-      <div>
-        <UserProfile></UserProfile>
-        <Form></Form>
-        </div>
+      <Form></Form>
+        
     );
 }
 

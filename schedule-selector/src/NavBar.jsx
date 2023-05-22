@@ -12,7 +12,7 @@ function Navbar() {
           {/* <Link to="/profile"><img style={{ width: 50, height: 50 }} src={profile} alt="Profile" /></Link> */}
       </ul>
       <div className="container">
-      <Link to="/"><img src={logo} alt="Logo" className="left-image" /></Link>
+      <Link to="/calendar"><img src={logo} alt="Logo" className="left-image" /></Link>
       <Link to="/profile"><img src={profile} alt="Profile" className="right-image" /></Link>
     </div>
     </nav>

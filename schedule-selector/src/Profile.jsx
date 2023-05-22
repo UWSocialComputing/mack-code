@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import UserProfile from './UserProfile'
 
 const url='https://getplans-7g4ibqksta-uc.a.run.app/'
 
@@ -155,7 +156,10 @@ const Form = () => {
 
 function Profile() {
     return (
+      <div>
+        <UserProfile></UserProfile>
         <Form></Form>
+        </div>
     );
 }
 

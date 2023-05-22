@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
 import firebase from 'firebase/compat/app';
 import getFirebaseConfig from './firebase-config';
-import { signInWithEmailAndPassword, getAuth } from "firebase/auth";
 import axios from 'axios';
 
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
-const auth = getAuth();
 const url='https://getplans-7g4ibqksta-uc.a.run.app/'
 
 const config = getFirebaseConfig;
 const firebaseApp = firebase.initializeApp(config);
+const auth = getAuth(firebaseApp);
+
 
 class LoginForm extends Component {
   constructor(props) {

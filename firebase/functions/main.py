@@ -45,19 +45,24 @@ def addUserInfo(req: https_fn.Request) -> https_fn.Response:
     if json_data:
         firestore_client: google.cloud.firestore.Client = firestore.client()
         email = json_data['email']
-        password = json_date['password']
+        password = json_data['password']
         username = json_data['username']
         phoneNum = json_data['phoneNumber']
     
-    newUser = {
-        'username' : username,
-        'password' : password,
-        'phoneNum' : phoneNum,
-        'maxPlans' : 1,
-        'minNotice' : 1
-    }
+        newUser = {
+            'username' : username,
+            'password' : password,
+            'phoneNum' : phoneNum,
+            'maxPlans' : 1,
+            'minNotice' : 1
+        }
+        try:
+            firestore_client.collection('users').document(email).set(newUser)
+            return https_fn.Response("success")
+        except:
+            raise https_fn.HttpsError('internal', 'failed to add to database')
 
-    db.collection('users').document(email).set(newUser)
+    raise https_fn.HttpsError('invalid-argument', 'request improperly formatted')
 
 
 @https_fn.on_request(cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post"]))

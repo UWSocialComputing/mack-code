@@ -9,7 +9,7 @@ const config = getFirebaseConfig;
 const firebaseApp = firebase.initializeApp(config);
 const auth = getAuth();
 
-const url='https://getplans-7g4ibqksta-uc.a.run.app/'
+const url='http://127.0.0.1:5001/friendstomeet-155ac/us-central1/addUserInfo'
 
 function createUsers(p_email, p_password, phoneNumber, username) {
     createUserWithEmailAndPassword(auth, p_email, p_password)

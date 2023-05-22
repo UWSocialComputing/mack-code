@@ -1,9 +1,10 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import UserProfile from './UserProfile'
 
 const url='https://getplans-7g4ibqksta-uc.a.run.app/'
 
-const Form = ({schedule}) => {
+const Form = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [maxHangoutValue, setMaxHangoutValue] = useState(1);
   const [daysInAdvanceValue, setDaysInAdvanceValue] = useState(1);
@@ -98,83 +99,14 @@ const Form = ({schedule}) => {
     console.log('Number Value:', maxHangoutValue);
     console.log('Days In Advance:', daysInAdvanceValue);
 
-    schedule.sort();
-    const convertedArray = [];
-    for(var i = 0; i < schedule.length; i++){
-        var date = schedule[i];
-        const month = date.getMonth() + 1; // Adding 1 to get 1-indexed month
-        const day = date.getDate();
-        const dayOfWeek = date.getDay(); // Returns 0 (Sunday) to 6 (Saturday)
-        const startTime = `${date.getHours()}:${date.getMinutes()}`;
-        const duration = 30;
-        const endDate = new Date(date.getTime() + duration*60000);
-        const endTime = `${endDate.getHours()}:${endDate.getMinutes()}`;
-        const startTimeMinutes = date.getHours() * 60 + date.getMinutes();
-        const endTimeMinutes = endDate.getHours() * 60 + endDate.getMinutes();
-        convertedArray.push ( {
-            'month': month,
-            'day': day,
-            'dayOfWeek': dayOfWeek,
-            'startTime' : startTime,
-            'duration' : duration,
-            'endTime' : endTime,
-            'startTimeMinutes' : startTimeMinutes,
-            'endTimeMinutes' : endTimeMinutes
-        });
-    }
-    convertedArray.sort(function(x, y) {
-        if(x.month < y.month) {
-            return -1;
-        } else if (x.month > y.month) {
-            return 1;
-        }
-        if(x.day < y.day) {
-            return -1;
-        } else if (x.day > y.day) {
-            return 1;
-        }
-        if(x.startTime < y.startTime) {
-            return -1;
-        } else if (y.startTime > x.startTime) {
-            return 1;
-        }
-        return 0;
-    });
-    console.log(convertedArray);
-    var t1  = convertedArray[0];
-    var t2 = convertedArray[1];
-    var c = null;
-    var combinedArray = [];
-    for(i = 1; i < convertedArray.length; i++) {
-        t2 = convertedArray[i];
-        c = combine(t1, t2);
-        if(c == null) {
-            combinedArray.push(t1);
-            t1 = convertedArray[i];
-        } else {
-            t1 = c;
-        }
-    }
-    combinedArray.push(t1);
-    console.log(combinedArray);
-    combinedArray.sort(function(x, y) {
-        if(x.duration > y.duration) {
-          return -1;
-        } else if (x.duration < y.duration) {
-          return 1;
-        }
-        return 0;
-    });
-
     var res = {
-        calendar: combinedArray,
         phoneNum: phoneNumber,
         maxHangouts: maxHangoutValue,
         daysInAdvance: daysInAdvanceValue
     };
 
     axios.post(url, res, {headers: {'Content-Type': 'application/json'}})
-    .then(data => alert("successfully sent your availability! get excited for some fun plans coming your way!"))
+    .then(data => alert("successfully updated your profile settings"))
     .catch(err => alert(err))
 
     // Reset form
@@ -206,12 +138,6 @@ const Form = ({schedule}) => {
           value={maxHangoutValue}
           onChange={handleNumberChange}
         />
-        <button type="button" onClick={handleNumberIncrement}>
-          +
-        </button>
-        <button type="button" onClick={handleNumberDecrement}>
-          -
-        </button>
       </div>
       <div>
         <label htmlFor="daysInAdvance">What's the minimum number of days you want to receive a plan's notice? </label>
@@ -222,16 +148,19 @@ const Form = ({schedule}) => {
           value={daysInAdvanceValue}
           onChange={handleDaysChange}
         />
-        <button type="button" onClick={handleDaysIncrement}>
-          +
-        </button>
-        <button type="button" onClick={handleDaysDecrement}>
-          -
-        </button>
       </div>
-      <button type="submit">Submit</button>
+      <button className="rectangle-button blue" type="submit">Submit</button>
     </form>
   );
 };
 
-export default Form;
+function Profile() {
+    return (
+      <div>
+        <UserProfile></UserProfile>
+        <Form></Form>
+        </div>
+    );
+}
+
+export default Profile;

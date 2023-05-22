@@ -1,0 +1,17 @@
+.circle-button {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: none;
+    font-size: 14px;
+    line-height: 1;
+    text-align: center;
+    cursor: pointer;
+  }
+  
+  .blue {
+    background-color: #0077cc;
+    color: white;
+  }
+  

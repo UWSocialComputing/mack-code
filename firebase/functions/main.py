@@ -76,6 +76,29 @@ def editSettings(req: https_fn.Request) -> https_fn.Response:
                     }, merge=True)
             return https_fn.Response("successfully updated settings")
         
+
+def addUserInfo(req: https_fn.Request) -> https_fn.Response:
+    json_data = req.get_json()
+    if json_data:
+        firestore_client: google.cloud.firestore.Client = firestore.client()
+        email = json_data['email']
+        password = json_data['password']
+        username = json_data['username']
+        phoneNum = json_data['phoneNumber']
+    
+        newUser = {
+            'username' : username,
+            'password' : password,
+            'phoneNum' : phoneNum,
+            'maxPlans' : 1,
+            'minNotice' : 1
+        }
+        try:
+            firestore_client.collection('users').document(email).set(newUser)
+            return https_fn.Response("success")
+        except:
+            raise https_fn.HttpsError('internal', 'failed to add to database')
+
     raise https_fn.HttpsError('invalid-argument', 'request improperly formatted')
 
 
@@ -85,6 +108,7 @@ def getPlans(req: https_fn.Request) -> https_fn.Response:
     if json_data:
         firestore_client: google.cloud.firestore.Client = firestore.client()
         activities_ref = firestore_client.collection('activities')
+
         planTimeIntervals = [PlanTimeInterval(month=entry['month'], day=entry['day'], dayOfWeek=entry['dayOfWeek'], startTime=entry['startTime'], endTime=entry['endTime'], duration=entry['duration'], startTimeMinutes=entry['startTimeMinutes'], endTimeMinutes=entry['startTimeMinutes']) for entry in json_data['calendar']]
         phoneNum = json_data['phoneNum']
         maxHangouts = json_data['maxHangouts']

@@ -3,6 +3,7 @@ import './App.css';
 import React from 'react';
 import TimeInput from './TimeInput';
 import DateInput from './DateInput';
+import './DaysofWeek.css'
 
 
 
@@ -32,10 +33,21 @@ class Home extends React.Component {
   
   render() {
     return (
+      
       <div>
-        <img style={{ width: 350, height: 75 }} src={logo} alt="Logo" />
         <DateInput initialDate="2023-05-21" onDateChange={this.handleDateChange} />
-        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sunda</span>
+        <div className="container">
+      <div className="text-container">
+        <p className="scaling-text">Sunday</p>
+        <p className="scaling-text">Monday</p>
+        <p className="scaling-text">Tuesday</p>
+        <p className="scaling-text">Wednesday</p>
+        <p className="scaling-text">Thursday</p>
+        <p className="scaling-text">Friday</p>
+        <p className="scaling-text">Saturday</p>
+      </div>
+    </div>
+        {/* <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sunda</span>
         <span style={{letterSpacing: 205}}>y</span>
         <span>Monda</span>
         <span style={{letterSpacing: 195}}>y</span>
@@ -47,7 +59,7 @@ class Home extends React.Component {
         <span style={{letterSpacing: 200}}>y</span>
         <span>Frida</span>
         <span style={{letterSpacing: 200}}>y</span>
-        <span>Saturday</span>
+        <span>Saturday</span> */}
         <ScheduleSelector
         selection={this.state.schedule}
         numDays={7}

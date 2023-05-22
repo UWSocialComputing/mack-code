@@ -45,13 +45,11 @@ def addUserInfo(req: https_fn.Request) -> https_fn.Response:
     if json_data:
         firestore_client: google.cloud.firestore.Client = firestore.client()
         email = json_data['email']
-        password = json_data['password']
         username = json_data['username']
         phoneNum = json_data['phoneNumber']
     
         newUser = {
             'username' : username,
-            'password' : password,
             'phoneNum' : phoneNum,
             'maxPlans' : 1,
             'minNotice' : 1

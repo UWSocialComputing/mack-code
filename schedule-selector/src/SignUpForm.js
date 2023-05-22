@@ -9,7 +9,7 @@ const config = getFirebaseConfig;
 const firebaseApp = firebase.initializeApp(config);
 const auth = getAuth();
 
-const url='http://127.0.0.1:5001/friendstomeet-155ac/us-central1/addUserInfo'
+const url='https://adduserinfo-7g4ibqksta-uc.a.run.app'
 
 function createUsers(p_email, p_password, phoneNumber, username) {
     createUserWithEmailAndPassword(auth, p_email, p_password)
@@ -21,11 +21,15 @@ function createUsers(p_email, p_password, phoneNumber, username) {
         axios.post(url, {
             user: auth.currentUser,
             email: p_email,
-            password: p_password,
             phoneNumber: phoneNumber,
             username: username
         },
-        {'Content-Type': 'application/json'});
+        {'Content-Type': 'application/json'})
+        .then((userRecord) => {
+          alert("successfully added to db")
+        }).catch((error) => {
+          alert("failed to add to db")
+        })
     })
     .catch((error) => {
         alert('Error creating new user:', error);

@@ -92,9 +92,9 @@ def editAvailabilityForUser(req: https_fn.Request) -> https_fn.Response:
         if doc.exists:
             try:
                 user_ref.set({
-                    'schedule': json_data['calendar']   
+                    'calendar': json_data['calendar']   
                 }, merge=True)
-                return https_fn.Response("successfully updated settings")
+                return https_fn.Response("successfully updated availability")
             except:
                 raise https_fn.HttpsError('internal', 'failed to change settings in database')
     raise https_fn.HttpsError('invalid-argument', 'request improperly formatted')

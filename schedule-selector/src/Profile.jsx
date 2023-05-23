@@ -74,6 +74,8 @@ class SettingsForm extends Component {
 
   render() {
     return (
+      <div>
+      <h1>Welcome to your profile page: {auth.currentUser.email}</h1>
       <form onSubmit={this.handleSubmit}>
         <div>
           <label htmlFor="maxHangoutValue">Up to how many plans would you want to receive? :</label>
@@ -97,6 +99,7 @@ class SettingsForm extends Component {
         </div>
         <button className="rectangle-button blue" type="submit">Submit</button>
       </form>
+      </div>
     );
   }
 }

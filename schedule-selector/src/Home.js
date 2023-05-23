@@ -4,6 +4,10 @@ import React from 'react';
 import TimeInput from './TimeInput';
 import DateInput from './DateInput';
 import './DaysofWeek.css'
+import { getAuth} from "firebase/auth";
+import firebase from 'firebase/compat/app';
+import getFirebaseConfig from './firebase-config';
+
 import logo from './logo.png'; // Tell webpack this JS file uses this image
 import axios from 'axios';
 
@@ -11,9 +15,9 @@ const config = getFirebaseConfig;
 const firebaseApp = firebase.initializeApp(config);
 const auth = getAuth(firebaseApp);
 
-const editCalendarUrl='http://127.0.0.1:5001/friendstomeet-155ac/us-central1/editAvailabilityForUser'
+const editCalendarUrl='https://editavailabilityforuser-7g4ibqksta-uc.a.run.app'
 
-const getCalendarUrl='http://127.0.0.1:5001/friendstomeet-155ac/us-central1/getAvailabilityForUser'
+const getCalendarUrl='https://getavailabilityforuser-7g4ibqksta-uc.a.run.app'
 
 class Home extends React.Component {
   state = { schedule : [], start : 8, end: 22, date : '5/21/23'}
@@ -23,7 +27,7 @@ class Home extends React.Component {
       axios.get(getCalendarUrl, { params: { email: auth.currentUser.email } })
       .then(response => {
         this.setState({
-          schedule : response.data.schedule
+          schedule : response.data.calendar
         })
       })
       .catch(err => {
@@ -43,10 +47,13 @@ class Home extends React.Component {
     this.setState({ end: endTime})
   };
   
-  onSubmitAvailabilityClick = (e) => {
-    axios.post(editCalendarUrl, {'calendar': this.state.get('schedule')}, {headers: {'Content-Type': 'application/json'}})
-    .then(data => alert("successfully updated your availability"))
-    .catch(err => alert(err))
+  onSubmitAvailabilityClick = () => {
+    const email = auth.currentUser.email
+    if(email && this.state.schedule) {
+      axios.post(editCalendarUrl, {email: email,'calendar': this.state.schedule}, {headers: {'Content-Type': 'application/json'}})
+      .then(data => alert("successfully updated your availability"))
+      .catch(err => alert(err))
+    }
   }
   
   
@@ -92,7 +99,7 @@ class Home extends React.Component {
         startDate={this.state.date}
         hourlyChunks={2}
         onChange={this.handleChange} />
-        <button className="rectangle-button blue" type="submit" onclick={this.onSubmitAvailabilityClick}>Submit Availability</button>
+        <button className="rectangle-button blue" type="button" onClick={this.onSubmitAvailabilityClick}>Submit Availability</button>
         <TimeInput onSubmit={this.handleTimeSubmit}/>
       </div>
     )

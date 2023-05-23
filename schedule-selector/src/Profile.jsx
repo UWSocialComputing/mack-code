@@ -3,10 +3,11 @@ import axios from 'axios';
 import { getAuth} from "firebase/auth";
 import firebase from 'firebase/compat/app';
 import getFirebaseConfig from './firebase-config';
+import './index.css'
 
 const editSettingsUrl='https://editsettings-7g4ibqksta-uc.a.run.app'
 
-const getSettingsUrl='https://getsettingsforuser-7g4ibqksta-uc.a.run.app'
+const getUserInfoUrl='https://getuserinfo-7g4ibqksta-uc.a.run.app'
 
 const config = getFirebaseConfig;
 const firebaseApp = firebase.initializeApp(config);
@@ -15,16 +16,19 @@ const auth = getAuth(firebaseApp);
 class SettingsForm extends Component {
   constructor(props) {
     super(props);
-    this.state = { maxHangoutValue: 1, daysInAdvanceValue: 1};
+    this.state = { maxHangoutValue: 1, daysInAdvanceValue: 1, friends: [], requestsSent: [], requestsRecieved: []};
   }
   
   componentDidMount() {
     if(auth.currentUser.email) {
-      axios.get(getSettingsUrl, { params: { email: auth.currentUser.email } })
+      axios.get(getUserInfoUrl, { params: { email: auth.currentUser.email } })
       .then(response => {
         this.setState({
           maxHangoutValue: response.data.maxPlans,
-          daysInAdvanceValue: response.data.minNotice 
+          daysInAdvanceValue: response.data.minNotice,
+          friends: response.data.friends,
+          requestsSent: response.data.requestsSent,
+          requestsRecieved: response.data.requestsRecieved
         })
       })
       .catch(err => {
@@ -75,7 +79,7 @@ class SettingsForm extends Component {
   render() {
     return (
       <div>
-      <h1>Welcome to your profile page: {auth.currentUser.email}</h1>
+      <h2>Welcome to your profile page: {auth.currentUser.email}</h2>
       <form onSubmit={this.handleSubmit}>
         <div>
           <label htmlFor="maxHangoutValue">Up to how many plans would you want to receive? :</label>
@@ -99,6 +103,32 @@ class SettingsForm extends Component {
         </div>
         <button className="rectangle-button blue" type="submit">Submit</button>
       </form>
+      <div>
+        <h3> Friends </h3>
+        <ul>
+        {
+          this.state.friends.map(friend => {
+            return <div> {friend} <button type='button'> delete friend </button> </div>
+          })
+        }
+        </ul>
+        <h3>Pending Friend Requests</h3>
+        <ul>
+        {
+          this.state.requestsRecieved.map(friend => {
+              return <div> {friend} <button type='button'> accept </button> <button type='button'> decline </button> </div>
+          })
+        }
+        </ul>
+        <h3> Sent Friend Requests</h3>
+        <ul>
+        {
+          this.state.requestsSent.map(friend => {
+              return <li>{friend}</li>
+          })
+        }
+        </ul>
+      </div>
       </div>
     );
   }

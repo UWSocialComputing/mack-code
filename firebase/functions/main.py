@@ -100,18 +100,21 @@ def editAvailabilityForUser(req: https_fn.Request) -> https_fn.Response:
     raise https_fn.HttpsError('invalid-argument', 'request improperly formatted')
 
 @https_fn.on_request(cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post"]))
-def getSettingsForUser(req: https_fn.Request) -> https_fn.Response:
+def getUserInfo(req: https_fn.Request) -> https_fn.Response:
     user = req.args.get("email")
     if user is not None:
         firestore_client: google.cloud.firestore.Client = firestore.client()
         user_ref = firestore_client.collection('users').document(user)
         doc = user_ref.get()
         doc_as_dict = doc.to_dict()
-        settings = {
-            'maxPlans' : doc_as_dict['maxPlans'],
-            'minNotice' : doc_as_dict['minNotice']
+        userInfo = {
+            'maxPlans' : doc_as_dict.get('maxPlans', 1),
+            'minNotice' : doc_as_dict.get('minNotice', 1),
+            'friends' : doc_as_dict.get('friends', []),
+            'requestsSent' : doc_as_dict.get('requestsSent', []),
+            'requestsRecieved' : doc_as_dict.get('requestsRecieved',[])
         }
-        return https_fn.Response(json.dumps(settings))
+        return https_fn.Response(json.dumps(userInfo))
     
     raise https_fn.HttpsError('invalid-argument', 'request improperly formatted')
 
@@ -122,7 +125,7 @@ def getAvailabilityForUser(req: https_fn.Request) -> https_fn.Response:
         firestore_client: google.cloud.firestore.Client = firestore.client()
         user_ref = firestore_client.collection('users').document(user)
         doc = user_ref.get()
-        response = {'calendar': doc.to_dict()['calendar']}
+        response = {'calendar': doc.to_dict().get('calendar', [])}
         return https_fn.Response(json.dumps(response))
     
     raise https_fn.HttpsError('invalid-argument', 'request improperly formatted')

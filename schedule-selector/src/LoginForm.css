@@ -16,9 +16,10 @@
   }
 
   .button-primary {
-    background-color: lightgreen;
+    background-color: #ABE5C2;
     margin: 0 auto; /* Center the input box horizontally */
-    width: 100px;
+    width: 80px;
+    height: 25px;
     border: none;
     color: white;
     border-radius: 6px;
@@ -29,7 +30,7 @@
     margin: 0 auto; /* Center the input box horizontally */
     width: 60px;
     border: none;
-    color: lightskyblue;
+    color: #3D88E9;
     border-radius: 6px;
   }
 

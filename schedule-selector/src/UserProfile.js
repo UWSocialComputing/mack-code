@@ -20,7 +20,7 @@ const UserProfile = () => {
                 <>
                 
                 <SignUpForm/>
-                <p>Already have an account? <button className="button button-alt" onClick={toggleForm}>Log In</button></p>
+                <p>Already have an account? <button style={{ textDecoration: 'underline' }} className="button button-alt" onClick={toggleForm}>Log In</button></p>
                 
                 </>
                 </div>
@@ -29,7 +29,7 @@ const UserProfile = () => {
                 <>
                 <LoginForm />
                 
-                <p>Don't have an account? <button className="button button-alt" onClick={toggleForm}>Sign Up</button></p>
+                <p >Don't have an account? <button style={{ textDecoration: 'underline' }} className="button button-alt" onClick={toggleForm}>Sign Up</button></p>
                 </>
                 </div>
             )}

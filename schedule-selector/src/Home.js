@@ -4,15 +4,16 @@ import React from 'react';
 import TimeInput from './TimeInput';
 import DateInput from './DateInput';
 import './DaysofWeek.css'
-
-
-
+import { getAuth} from "firebase/auth";
 import logo from './logo.png'; // Tell webpack this JS file uses this image
-console.log(logo); // /logo.84287d09.png
+import axios from 'axios';
 
+const editCalendarUrl='http://127.0.0.1:5001/friendstomeet-155ac/us-central1/editAvailabilityForUser'
+
+const getCalendarUrl='http://127.0.0.1:5001/friendstomeet-155ac/us-central1/getAvailabilityForUser'
 
 class Home extends React.Component {
-  state = { schedule : [], phoneNum : '', maxHangouts : '', daysInAdvance : '', start : 8, end: 22, date : '5/21/23'}
+  state = { schedule : [], start : 8, end: 22, date : '5/21/23'}
 
   handleDateChange = (date) => {
     // Perform any necessary actions with the updated date
@@ -24,6 +25,12 @@ class Home extends React.Component {
     this.setState({ start: startTime})
     this.setState({ end: endTime})
   };
+
+  onSubmitAvailabilityClick = () => {
+    axios.post(editCalendarUrl, {'calendar': this.state.schedule}, {headers: {'Content-Type': 'application/json'}})
+    .then(data => alert("successfully updated your availability"))
+    .catch(err => alert(err))
+  }
   
   handleChange = newSchedule => {
     this.setState({ schedule: newSchedule })
@@ -32,8 +39,10 @@ class Home extends React.Component {
   // Add min time and max time as settings for user
   
   render() {
+    axios.get(getCalendarUrl, { params: { email: getAuth().currentUser.email } })
+    .then( response => this.setState({ schedule: response.data.schedule }))
+    .catch(err => alert("error fetching availability"))
     return (
-      
       <div>
         <DateInput initialDate="2023-05-21" onDateChange={this.handleDateChange} />
         <div className="container">
@@ -68,8 +77,8 @@ class Home extends React.Component {
         startDate={this.state.date}
         hourlyChunks={2}
         onChange={this.handleChange} />
+        <button className="rectangle-button blue" type="submit" onclick={this.onSubmitAvailabilityClick}>Submit Availability</button>
         <TimeInput onSubmit={this.handleTimeSubmit}/>
-        
       </div>
     )
   }

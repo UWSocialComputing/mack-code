@@ -60,6 +60,39 @@ def addFriend(req: https_fn.Request) -> https_fn.Response:
         
     raise https_fn.HttpsError('invalid-argument', 'request improperly formatted')
 
+@https_fn.on_request(cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post"]))
+def addRequest(req: https_fn.Request) -> https_fn.Response:
+    json_data = req.get_json()
+    if json_data:
+        user = json_data['email']
+        newRequest = json_data['newRequest']
+
+        # Add request to user
+        firestore_client: google.cloud.firestore.Client = firestore.client()
+        user_ref = firestore_client.collection('users').document(user)
+        doc = user_ref.get()
+        if doc.exists:
+            sentRequests = doc.to_dict().get('sentRequests', [])
+            if newRequest not in sentRequests:
+                sentRequests.append(newRequest)
+                user_ref.set({
+                    'sentRequests': sentRequests
+                }, merge=True)
+
+        # Add a request received to other user
+        user_ref = firestore_client.collection('users').document(newRequest)
+        doc = user_ref.get()
+        if doc.exists:
+            requestsRecieved = doc.to_dict().get('requestsRecieved', [])
+            if user not in requestsRecieved:
+                requestsRecieved.append(user)
+                user_ref.set({
+                    'requestsRecieved': requestsRecieved
+                }, merge=True)
+        
+            return https_fn.Response(f"successfully added pending request: {newRequest}")
+        
+    raise https_fn.HttpsError('invalid-argument', 'request improperly formatted')
 
 @https_fn.on_request(cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post"]))
 def editSettings(req: https_fn.Request) -> https_fn.Response:

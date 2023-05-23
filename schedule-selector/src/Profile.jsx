@@ -1,8 +1,8 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import UserProfile from './UserProfile'
+import { getAuth} from "firebase/auth";
 
-const url='https://getplans-7g4ibqksta-uc.a.run.app/'
+const url='http://127.0.0.1:5001/friendstomeet-155ac/us-central1/editSettings'
 
 const Form = () => {
   const [maxHangoutValue, setMaxHangoutValue] = useState(1);
@@ -83,10 +83,10 @@ const Form = () => {
     console.log('Days In Advance:', daysInAdvanceValue);
 
     var res = {
-        maxHangouts: maxHangoutValue,
-        daysInAdvance: daysInAdvanceValue
+      email: getAuth().currentUser.email,
+      maxPlans: maxHangoutValue,
+      minNotice: daysInAdvanceValue
     };
-
     axios.post(url, res, {headers: {'Content-Type': 'application/json'}})
     .then(data => alert("successfully updated your profile settings"))
     .catch(err => alert(err))

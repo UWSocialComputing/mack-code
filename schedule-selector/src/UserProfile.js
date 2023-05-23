@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import SignUpForm from './SignUpForm';
 import LoginForm from './LoginForm';
+import './LoginForm'
 
 const UserProfile = () => {
 
@@ -13,17 +14,24 @@ const UserProfile = () => {
 
     return (
         <div>
-            <h2>User Profile</h2>
+            {/* <h2>User Profile</h2> */}
             {isSignUp ? (
+                <div className="centered-element">
                 <>
-                <p>Already have an account? <button onClick={toggleForm}>Log In</button></p>
+                
                 <SignUpForm/>
+                <p>Already have an account? <button className="button button-alt" onClick={toggleForm}>Log In</button></p>
+                
                 </>
+                </div>
             ) : (
+                <div className="centered-element">
                 <>
-                <p>Don't have an account? <button onClick={toggleForm}>Sign Up</button></p>
                 <LoginForm />
+                
+                <p>Don't have an account? <button className="button button-alt" onClick={toggleForm}>Sign Up</button></p>
                 </>
+                </div>
             )}
         </div>
     );

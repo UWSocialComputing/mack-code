@@ -1,0 +1,57 @@
+.custom-input {
+    background-color: lightgray;
+    width: 200px; /* Adjust the width as needed */
+    padding: 8px;
+    border: none;
+    border-radius: 8px;
+    margin: 0 auto; /* Center the input box horizontally */
+    margin-bottom: 8px;
+  }
+  
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 5vh;
+  }
+
+  .button-primary {
+    background-color: lightgreen;
+    margin: 0 auto; /* Center the input box horizontally */
+    width: 100px;
+    border: none;
+    color: white;
+    border-radius: 6px;
+  }
+
+  .button-alt {
+    background-color: white;
+    margin: 0 auto; /* Center the input box horizontally */
+    width: 60px;
+    border: none;
+    color: lightskyblue;
+    border-radius: 6px;
+  }
+
+  /* Common styles for text elements */
+body {
+    font-family: Optima, sans-serif; /* Change the font family here */
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: Optima, sans-serif; /* Change the font family here */
+  }
+  
+  p {
+    font-family: Optima, sans-serif; /* Change the font family here */
+  }
+  
+  .centered-element {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center; /* If the element contains text */
+  }
+  
+  
+      
+  

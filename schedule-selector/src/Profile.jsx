@@ -1,52 +1,77 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { getAuth} from "firebase/auth";
+import firebase from 'firebase/compat/app';
+import getFirebaseConfig from './firebase-config';
 
 const editSettingsUrl='https://editsettings-7g4ibqksta-uc.a.run.app'
 
 const getSettingsUrl='https://getsettingsforuser-7g4ibqksta-uc.a.run.app'
 
+const config = getFirebaseConfig;
+const firebaseApp = firebase.initializeApp(config);
+const auth = getAuth(firebaseApp);
+
 class SettingsForm extends Component {
   constructor(props) {
-    super(props)
-    this.state = { maxHangoutValue: 1, daysInAdvanceValue: 1}
-    axios.get(getSettingsUrl, { params: { email: getAuth().currentUser.email } })
-    .then( response => {
-      this.state = {
-        maxHangoutValue: response.data.maxPlans,
-        daysInAdvanceValue: response.data.minNotice 
-      }
-    })
-    .catch(err => {
-      alert(err)
-    })
+    super(props);
+    this.state = { maxHangoutValue: 1, daysInAdvanceValue: 1};
+  }
+  
+  componentDidMount() {
+    if(auth.currentUser.email) {
+      axios.get(getSettingsUrl, { params: { email: auth.currentUser.email } })
+      .then(response => {
+        this.setState({
+          maxHangoutValue: response.data.maxPlans,
+          daysInAdvanceValue: response.data.minNotice 
+        })
+      })
+      .catch(err => {
+        alert(err)
+      })
+    }
   }
 
-  handleChange = (e) => {
-    let { name, value } = e.target;
+  handleDaysChange = (e) => {
+    let { value } = e.target;
     value = parseInt(value);
 
     if (isNaN(value)) {
-      value = 1;
+        value = 1;
     } else if (value < 1) {
-      value = 1;
+        value = 1;
     }
+    this.setState({daysInAdvanceValue: value});
+  }
     
-    this.setState({ [name]: value });
-  };
+  handleMaxPlansChange = (e) => {
+    let { value } = e.target;
+    value = parseInt(value);
+
+    if (isNaN(value)) {
+        value = 1;
+    } else if (value < 1) {
+        value = 1;
+    }
+    this.setState({maxHangoutValue: value});
+  }
 
 
   handleSubmit = (e) => {
-    var res = {
-      email: getAuth().currentUser.email,
-      maxPlans: this.state.maxHangoutValue,
-      minNotice: this.state.daysInAdvanceValue
-    };
-    axios.post(editSettingsUrl, res, {headers: {'Content-Type': 'application/json'}})
-    .then(data => alert("successfully updated your profile settings"))
-    .catch(err => alert(err))
+    e.preventDefault()
+    if(auth.currentUser.email) {
+      var response = {
+        email: auth.currentUser.email,
+        maxPlans: this.state.maxHangoutValue,
+        minNotice: this.state.daysInAdvanceValue
+      };
+      axios.post(editSettingsUrl, response, {headers: {'Content-Type': 'application/json'}})
+      .then(data => alert("successfully updated your profile settings"))
+      .catch(err => alert(err));
+    }
+  }
 
-  };
   render() {
     return (
       <form onSubmit={this.handleSubmit}>
@@ -57,7 +82,7 @@ class SettingsForm extends Component {
             id="maxHangoutValue"
             name="maxHangoutValue"
             value={this.state.maxHangoutValue}
-            onChange={this.handleChange}
+            onChange={this.handleMaxPlansChange}
           />
         </div>
         <div>
@@ -67,13 +92,13 @@ class SettingsForm extends Component {
             id="daysInAdvance"
             name="daysInAdvance"
             value={this.state.daysInAdvanceValue}
-            onChange={this.handleChange}
+            onChange={this.handleDaysChange}
           />
         </div>
         <button className="rectangle-button blue" type="submit">Submit</button>
       </form>
     );
-  };
+  }
 }
 
 function Profile() {
@@ -83,3 +108,4 @@ function Profile() {
 }
 
 export default Profile;
+    

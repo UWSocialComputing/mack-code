@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { Component, useState } from 'react';
 import firebase from 'firebase/compat/app';
 import getFirebaseConfig from './firebase-config';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { Navigate } from "react-router-dom";
 import 'firebase/firestore';
 import axios from 'axios';
 
@@ -11,13 +12,37 @@ const auth = getAuth();
 
 const url='https://adduserinfo-7g4ibqksta-uc.a.run.app'
 
-function createUsers(p_email, p_password, phoneNumber, username) {
+class SignUpForm extends Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      username: '',
+      email: '',
+      password: '',
+      phoneNumber: '',
+      redirectTo: ''
+    };
+  }
+
+  handleChange = (e) => {
+    const { name, value } = e.target;
+    this.setState({ [name]: value });
+  }; 
+  
+  handleSignUp = async (e) => {
+    e.preventDefault();
+    const { username, email, password, phoneNumber, redirectTo } = this.state;
+    this.createUsers(email, password, phoneNumber, username);
+  };
+
+  createUsers = (p_email, p_password, phoneNumber, username) => {
     createUserWithEmailAndPassword(auth, p_email, p_password)
     .then((userRecord) => {
         // See the UserRecord reference doc for the contents of userRecord.
         alert('Successfully created new user:', userRecord.uid);
-        alert(auth.currentUser);
-        console.log(auth.currentUser);
+        // console.log(auth.currentUser);
         axios.post(url, {
             user: auth.currentUser,
             email: p_email,
@@ -26,40 +51,41 @@ function createUsers(p_email, p_password, phoneNumber, username) {
         },
         {'Content-Type': 'application/json'})
         .then((userRecord) => {
-          alert("successfully added to db")
+          alert("successfully added to db");
         }).catch((error) => {
           alert("failed to add to db")
         })
+        this.setState({
+          username: '',
+          email: '',
+          password: '',
+          phoneNumber: '',
+          redirectTo: '/calendar'
+        });
     })
     .catch((error) => {
         alert('Error creating new user:', error);
     });
-}
+  }
 
-const SignUpForm = () => {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [error, setError] = useState('');
-
-  const handleSignUp = (e) => {
-    e.preventDefault();
-    createUsers(email, password, phoneNumber, username, '');
-  };
-
-  return (
+  render() {
+    const { username, email, password, phoneNumber, redirectTo } = this.state;
+    
+    if(redirectTo) {
+      return <Navigate to={redirectTo} />
+    }
+    return <>
     <div>
       <h2>Sign Up</h2>
-      {error && <p>{error}</p>}
-      <form onSubmit={handleSignUp}>
+      <form onSubmit={this.handleSignUp}>
         <div>
           <label htmlFor="username">Username:</label>
           <input
             type="text"
             id="username"
+            name="username"
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={this.handleChange}
             required
           />
         </div>
@@ -68,8 +94,9 @@ const SignUpForm = () => {
           <input
             type="email"
             id="email"
+            name="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={this.handleChange}
             required
           />
         </div>
@@ -78,8 +105,9 @@ const SignUpForm = () => {
           <input
             type="password"
             id="password"
+            name="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={this.handleChange}
             required
           />
         </div>
@@ -88,15 +116,17 @@ const SignUpForm = () => {
           <input
             type="tel"
             id="phoneNumber"
+            name="phoneNumber"
             value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
+            onChange={this.handleChange}
             required
           />
         </div>
         <button type="submit">Sign Up</button>
       </form>
     </div>
-  );
-};
+    </>
+  }
+}
 
 export default SignUpForm;

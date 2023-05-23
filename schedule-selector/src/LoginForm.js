@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import firebase from 'firebase/compat/app';
 import getFirebaseConfig from './firebase-config';
+import { Navigate } from "react-router-dom";
 import axios from 'axios';
 
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
@@ -20,7 +21,8 @@ class LoginForm extends Component {
       email: '',
       password: '',
       loginError: false,
-      isLoading: false
+      isLoading: false,
+      redirectTo: ''
     };
   }
 
@@ -40,15 +42,17 @@ class LoginForm extends Component {
     .then((userCredential) => {
       // Signed in 
       const user = userCredential.user;
-      this.setState({ loginError: false });
+      this.setState({
+        email: '',
+        password: '',
+        loginError: false,
+        redirectTo: '/calendar'
+      });
       alert("Login Sucess!");
       console.log(userCredential);
-      axios.post(url, {
-        user: user
-      },
-      {'Content-Type': 'application/json'});
-      })
+    })
     .catch((error) => {
+      this.setState({ loginError: true });
       const errorCode = error.code;
       const errorMessage = error.message;
       alert(errorMessage);
@@ -58,8 +62,10 @@ class LoginForm extends Component {
   };
 
   render() {
-    const { email, password, loginError, isLoading } = this.state;
-
+    const { email, password, loginError, isLoading, redirectTo } = this.state;
+    if (redirectTo) {
+      return <Navigate to={redirectTo} />;
+    }
     return (
       <div>
         <h3>Login</h3>

@@ -25,16 +25,12 @@ const TimeInput = ({ onSubmit }) => {
   };
 
   return (
-    <div>
+    <div style={{ fontSize: '20px' }}>
       <form onSubmit={handleSubmit}>
-        <div>
           <label>Start Time:</label>
-          <input type="number" min="0" max="23" value={startTime} onChange={handleStartTimeChange} />
-        </div>
-        <div>
+          <input style={{ fontSize: '18px' }} type="number" min="0" max="23" value={startTime} onChange={handleStartTimeChange} />
           <label>End Time:</label>
-          <input type="number" min="0" max="23" value={endTime} onChange={handleEndTimeChange} />
-        </div>
+          <input style={{ fontSize: '18px' }} type="number" min="0" max="23" value={endTime} onChange={handleEndTimeChange} />
         <button className="rectangle-button blue" type="submit">Update</button>
       </form>
     </div>

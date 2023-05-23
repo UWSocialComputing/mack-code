@@ -66,7 +66,16 @@ class Home extends React.Component {
   render() {
     return (
       <div>
+        <div style={{ borderTop: '1px solid black', width: '100%', display: 'flex', justifyContent: 'space-between' }}>
+          <p style={{ fontSize: '22px' }}>Enter times you would be willing to hang out below:</p>
+          <div style={{ marginTop: '20px' }}>
+          <TimeInput onSubmit={this.handleTimeSubmit}/>
+          </div>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <DateInput initialDate="2023-05-21" onDateChange={this.handleDateChange} />
+        <button className="rectangle-button blue" type="button" onClick={this.onSubmitAvailabilityClick}>Submit Availability</button>
+        </div>       
         <div className="container">
       <div className="text-container">
         <p className="scaling-text">Sunday</p>
@@ -78,19 +87,6 @@ class Home extends React.Component {
         <p className="scaling-text">Saturday</p>
       </div>
     </div>
-        {/* <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sunda</span>
-        <span style={{letterSpacing: 205}}>y</span>
-        <span>Monda</span>
-        <span style={{letterSpacing: 195}}>y</span>
-        <span>Tuesda</span>
-        <span style={{letterSpacing: 190}}>y</span>
-        <span>Wednesda</span>
-        <span style={{letterSpacing: 180}}>y</span>
-        <span>Thursda</span>
-        <span style={{letterSpacing: 200}}>y</span>
-        <span>Frida</span>
-        <span style={{letterSpacing: 200}}>y</span>
-        <span>Saturday</span> */}
         <ScheduleSelector
         selection={this.state.schedule}
         numDays={7}
@@ -99,8 +95,6 @@ class Home extends React.Component {
         startDate={this.state.date}
         hourlyChunks={2}
         onChange={this.handleChange} />
-        <button className="rectangle-button blue" type="button" onClick={this.onSubmitAvailabilityClick}>Submit Availability</button>
-        <TimeInput onSubmit={this.handleTimeSubmit}/>
       </div>
     )
   }

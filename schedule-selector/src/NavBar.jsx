@@ -7,11 +7,7 @@ import './NavBar.css';
 function Navbar() {
   return (
     <nav>
-      <ul>
-          {/* <img style={{ width: 350, height: 75 }} src={logo} alt="Logo" /></Link> */}
-          {/* <Link to="/profile"><img style={{ width: 50, height: 50 }} src={profile} alt="Profile" /></Link> */}
-      </ul>
-      <div className="container">
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
       <Link to="/calendar"><img src={logo} alt="Logo" className="left-image" /></Link>
       <Link to="/profile"><img src={profile} alt="Profile" className="right-image" /></Link>
     </div>

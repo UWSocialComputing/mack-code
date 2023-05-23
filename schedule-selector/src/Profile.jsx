@@ -1,37 +1,39 @@
+import React, { Component } from 'react';
 import axios from 'axios';
-import React, { useState } from 'react';
-import UserProfile from './UserProfile'
+import { getAuth} from "firebase/auth";
+import firebase from 'firebase/compat/app';
+import getFirebaseConfig from './firebase-config';
 
-const url='https://getplans-7g4ibqksta-uc.a.run.app/'
+const editSettingsUrl='https://editsettings-7g4ibqksta-uc.a.run.app'
 
-const Form = () => {
-  const [maxHangoutValue, setMaxHangoutValue] = useState(1);
-  const [daysInAdvanceValue, setDaysInAdvanceValue] = useState(1);
+const getSettingsUrl='https://getsettingsforuser-7g4ibqksta-uc.a.run.app'
 
-  const handleNumberChange = (e) => {
-    let { value } = e.target;
-    value = parseInt(value);
+const config = getFirebaseConfig;
+const firebaseApp = firebase.initializeApp(config);
+const auth = getAuth(firebaseApp);
 
-    if (isNaN(value)) {
-      value = 1;
-    } else if (value < 1) {
-      value = 1;
+class SettingsForm extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { maxHangoutValue: 1, daysInAdvanceValue: 1};
+  }
+  
+  componentDidMount() {
+    if(auth.currentUser.email) {
+      axios.get(getSettingsUrl, { params: { email: auth.currentUser.email } })
+      .then(response => {
+        this.setState({
+          maxHangoutValue: response.data.maxPlans,
+          daysInAdvanceValue: response.data.minNotice 
+        })
+      })
+      .catch(err => {
+        alert(err)
+      })
     }
+  }
 
-    setMaxHangoutValue(value);
-  };
-
-  const handleNumberIncrement = () => {
-    setMaxHangoutValue((prevValue) => prevValue + 1);
-  };
-
-  const handleNumberDecrement = () => {
-    if (maxHangoutValue > 1) {
-      setMaxHangoutValue((prevValue) => prevValue - 1);
-    }
-  };
-
-  const handleDaysChange = (e) => {
+  handleDaysChange = (e) => {
     let { value } = e.target;
     value = parseInt(value);
 
@@ -40,93 +42,73 @@ const Form = () => {
     } else if (value < 1) {
         value = 1;
     }
-
-    setDaysInAdvanceValue(value);
+    this.setState({daysInAdvanceValue: value});
   }
+    
+  handleMaxPlansChange = (e) => {
+    let { value } = e.target;
+    value = parseInt(value);
 
-  const handleDaysIncrement = () => {
-    setDaysInAdvanceValue((prevValue) => prevValue + 1);
-  };
-
-  const handleDaysDecrement = () => {
-    if (daysInAdvanceValue > 1) {
-      setDaysInAdvanceValue((prevValue) => prevValue - 1);
+    if (isNaN(value)) {
+        value = 1;
+    } else if (value < 1) {
+        value = 1;
     }
-  };
-
-  const combine = (t1, t2) => {
-    if(t1['month'] !== t2['month'])
-        return null;
-    if(t1.day !== t2.day)
-        return null;
-    if(t1.endTime === t2.startTime)
-        return {
-            'month': t1.month,
-            'day': t1.day,
-            'dayOfWeek': t1.dayOfWeek,
-            'startTime' : t1.startTime,
-            'duration' : t1.duration + t2.duration,
-            'endTime' : t2.endTime,
-            'startTimeMinutes' : t1.startTimeMinutes,
-            'endTimeMinutes' : t2.endTimeMinutes
-        };
-    else
-        return null;
+    this.setState({maxHangoutValue: value});
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
 
+  handleSubmit = (e) => {
+    e.preventDefault()
+    if(auth.currentUser.email) {
+      var response = {
+        email: auth.currentUser.email,
+        maxPlans: this.state.maxHangoutValue,
+        minNotice: this.state.daysInAdvanceValue
+      };
+      axios.post(editSettingsUrl, response, {headers: {'Content-Type': 'application/json'}})
+      .then(data => alert("successfully updated your profile settings"))
+      .catch(err => alert(err));
+    }
+  }
 
-    // Handle form submission
-    console.log('Number Value:', maxHangoutValue);
-    console.log('Days In Advance:', daysInAdvanceValue);
-
-    var res = {
-        maxHangouts: maxHangoutValue,
-        daysInAdvance: daysInAdvanceValue
-    };
-
-    axios.post(url, res, {headers: {'Content-Type': 'application/json'}})
-    .then(data => alert("successfully updated your profile settings"))
-    .catch(err => alert(err))
-
-    // Reset form
-    setMaxHangoutValue(1);
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
+  render() {
+    return (
       <div>
-        <label htmlFor="maxHangoutValue">Up to how many plans would you want to receive? :</label>
-        <input
-          type="number"
-          id="maxHangoutValue"
-          name="maxHangoutValue"
-          value={maxHangoutValue}
-          onChange={handleNumberChange}
-        />
+      <h1>Welcome to your profile page: {auth.currentUser.email}</h1>
+      <form onSubmit={this.handleSubmit}>
+        <div>
+          <label htmlFor="maxHangoutValue">Up to how many plans would you want to receive? :</label>
+          <input
+            type="number"
+            id="maxHangoutValue"
+            name="maxHangoutValue"
+            value={this.state.maxHangoutValue}
+            onChange={this.handleMaxPlansChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="daysInAdvance">What's the minimum number of days you want to receive a plan's notice? </label>
+          <input
+            type="number"
+            id="daysInAdvance"
+            name="daysInAdvance"
+            value={this.state.daysInAdvanceValue}
+            onChange={this.handleDaysChange}
+          />
+        </div>
+        <button className="rectangle-button blue" type="submit">Submit</button>
+      </form>
       </div>
-      <div>
-        <label htmlFor="daysInAdvance">What's the minimum number of days you want to receive a plan's notice? </label>
-        <input
-          type="number"
-          id="daysInAdvance"
-          name="daysInAdvance"
-          value={daysInAdvanceValue}
-          onChange={handleDaysChange}
-        />
-      </div>
-      <button className="rectangle-button blue" type="submit">Submit</button>
-    </form>
-  );
-};
+    );
+  }
+}
 
 function Profile() {
     return (
-      <Form></Form>
-        
+      <SettingsForm></SettingsForm>
     );
 }
 
 export default Profile;
+    

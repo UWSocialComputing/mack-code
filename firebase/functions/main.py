@@ -4,6 +4,7 @@
 
 import google.cloud.firestore
 import os
+import json
 
 # The Cloud Functions for Firebase SDK to create Cloud Functions and set up triggers.
 from firebase_functions import https_fn, options
@@ -63,19 +64,69 @@ def addFriend(req: https_fn.Request) -> https_fn.Response:
 @https_fn.on_request(cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post"]))
 def editSettings(req: https_fn.Request) -> https_fn.Response:
     json_data = req.get_json()
-    if json_data:
+    if json_data and 'email' in json_data:
         user = json_data['email']
         firestore_client: google.cloud.firestore.Client = firestore.client()
         user_ref = firestore_client.collection('users').document(user)
         doc = user_ref.get()
         if doc.exists:
-            for setting in ['maxPlans', 'minNotice', 'phoneNum']:
-                if setting in json_data:
-                    user_ref.set({
-                        setting: json_data[setting]
-                    }, merge=True)
-            return https_fn.Response("successfully updated settings")
-        
+            try:
+                for setting in ['maxPlans', 'minNotice']:
+                    if setting in json_data:
+                        user_ref.set({
+                            setting: json_data[setting]
+                        }, merge=True)
+                return https_fn.Response("successfully updated settings")
+            except:
+                raise https_fn.HttpsError('internal', 'failed to change settings in database')
+    raise https_fn.HttpsError('invalid-argument', 'request improperly formatted')
+
+@https_fn.on_request(cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post"]))
+def editAvailabilityForUser(req: https_fn.Request) -> https_fn.Response:
+    json_data = req.get_json()
+    if json_data and 'email' in json_data:
+        firestore_client: google.cloud.firestore.Client = firestore.client()
+        user = json_data['email']
+        user_ref = firestore_client.collection('users').document(user)
+        doc = user_ref.get()
+        if doc.exists:
+            try:
+                user_ref.set({
+                    'calendar': json_data['calendar']   
+                }, merge=True)
+                return https_fn.Response("successfully updated availability")
+            except:
+                raise https_fn.HttpsError('internal', 'failed to change settings in database')
+    raise https_fn.HttpsError('invalid-argument', 'request improperly formatted')
+
+@https_fn.on_request(cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post"]))
+def getSettingsForUser(req: https_fn.Request) -> https_fn.Response:
+    user = req.args.get("email")
+    if user is not None:
+        firestore_client: google.cloud.firestore.Client = firestore.client()
+        user_ref = firestore_client.collection('users').document(user)
+        doc = user_ref.get()
+        doc_as_dict = doc.to_dict()
+        settings = {
+            'maxPlans' : doc_as_dict['maxPlans'],
+            'minNotice' : doc_as_dict['minNotice']
+        }
+        return https_fn.Response(json.dumps(settings))
+    
+    raise https_fn.HttpsError('invalid-argument', 'request improperly formatted')
+
+@https_fn.on_request(cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post"]))
+def getAvailabilityForUser(req: https_fn.Request) -> https_fn.Response:
+    user = req.args.get("email")
+    if user is not None:
+        firestore_client: google.cloud.firestore.Client = firestore.client()
+        user_ref = firestore_client.collection('users').document(user)
+        doc = user_ref.get()
+        response = {'calendar': doc.to_dict()['calendar']}
+        return https_fn.Response(json.dumps(response))
+    
+    raise https_fn.HttpsError('invalid-argument', 'request improperly formatted')
+
 
 def addUserInfo(req: https_fn.Request) -> https_fn.Response:
     json_data = req.get_json()
@@ -89,7 +140,11 @@ def addUserInfo(req: https_fn.Request) -> https_fn.Response:
             'username' : username,
             'phoneNum' : phoneNum,
             'maxPlans' : 1,
-            'minNotice' : 1
+            'minNotice' : 1,
+            'friends' : [],
+            'requestsSent' : [],
+            'requestsRecieved' : [],
+            'calendar' : []
         }
         try:
             firestore_client.collection('users').document(email).set(newUser)

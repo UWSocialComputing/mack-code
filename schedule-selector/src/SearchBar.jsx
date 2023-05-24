@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
-import getFirebaseConfig from './firebase-config';
 import SearchResult from './SearchResult';
 
-const firebaseConfig = getFirebaseConfig;
-const app = firebase.initializeApp(firebaseConfig)
 
 class SearchBar extends Component {
     constructor(props) {
@@ -31,14 +28,17 @@ class SearchBar extends Component {
       
         // Query the users collection based on the search query
         usersRef
-            .where('username', '>=', searchQuery)
-            .where('username', '<=', searchQuery + '\uf8ff')
+            .where('email', '>=', searchQuery)
+            .where('email', '<=', searchQuery + '\uf8ff')
             .get()
             .then((querySnapshot) => {
                 const results = [];
                 querySnapshot.forEach((doc) => {
-                    console.log(doc.data);
-                    results.push(doc.data().username);
+                    const email = doc.data().email
+                    if(!(this.props.friends.includes(email) || this.props.requestsSent.includes(email) || this.props.requestsRecieved.includes(email))) {
+                        console.log(doc.data);
+                        results.push(doc.data().email);
+                    }
                 });
                 this.setState({ searchResults: results.slice(0, 5) });
             })
@@ -63,8 +63,8 @@ class SearchBar extends Component {
         <div>
             {searchResults.length > 0 ? (
             <div>
-                {searchResults.map((user, index) => (
-                <SearchResult username={user}></SearchResult>
+                {searchResults.map((email, index) => (
+                <SearchResult email={email}></SearchResult>
                 ))}
             </div>
             ) : (

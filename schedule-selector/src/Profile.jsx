@@ -38,6 +38,18 @@ class SettingsForm extends Component {
     }
   }
 
+  addFriend = (e) => {
+    
+  }
+
+  deleteFriend = (e) => {
+
+  }
+
+  declineRequest = (e) => {
+
+  }
+
   handleDaysChange = (e) => {
     let { value } = e.target;
     value = parseInt(value);
@@ -109,7 +121,7 @@ class SettingsForm extends Component {
         <ul>
         {
           this.state.friends.map(friend => {
-            return <div> {friend} <button type='button'> delete friend </button> </div>
+            return <div> {friend} <button type='button' onClick={this.deleteFriend}> delete friend </button> </div>
           })
         }
         </ul>
@@ -117,7 +129,7 @@ class SettingsForm extends Component {
         <ul>
         {
           this.state.requestsRecieved.map(friend => {
-              return <div> {friend} <button type='button'> accept </button> <button type='button'> decline </button> </div>
+              return <div> {friend} <button type='button' onClick={addFriend}> accept </button> <button type='button' onClick={declineRequest}> decline </button> </div>
           })
         }
         </ul>

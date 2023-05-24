@@ -41,21 +41,28 @@ class PlanTimeInterval:
         + ". Here's an idea for what to do with some friends. "
 
 @https_fn.on_request(cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post"]))
-def addFriend(req: https_fn.Request) -> https_fn.Response:
+def addOrDeleteFriend(req: https_fn.Request) -> https_fn.Response:
     json_data = req.get_json()
     if json_data:
         user = json_data['email']
         newFriend = json_data['newFriend']
+        operation = json_data['operation']
 
         firestore_client: google.cloud.firestore.Client = firestore.client()
         user_ref = firestore_client.collection('users').document(user)
-        doc = user_ref.get()
-        if doc.exists:
-            friends = doc.to_dict().get('friends', [])
-            friends.append(newFriend)
-            user_ref.set({
-                'friends': friends
-            }, merge=True)
+        friend_ref = firestore_client.collection('users').document(newFriend)
+        doc1 = user_ref.get()
+        doc2 = friend_ref.get()
+        if doc1.exists and doc2.exists:
+            for doc, ref, newFriend in [(doc1, user_ref, newFriend), (doc2, friend_ref, user)]:
+                friends = doc.to_dict().get('friends', [])
+                if operation == 'add':
+                    friends.append(newFriend)
+                elif operation == 'delete':
+                    friends.remove(newFriend)
+                ref.set({
+                    'friends': friends
+                }, merge=True)
             return https_fn.Response(f"successfully added new friend: {newFriend}")
         
     raise https_fn.HttpsError('invalid-argument', 'request improperly formatted')

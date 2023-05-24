@@ -5,6 +5,7 @@ import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { Navigate } from "react-router-dom";
 import 'firebase/firestore';
 import axios from 'axios';
+import './LoginForm.css'
 
 const config = getFirebaseConfig;
 const firebaseApp = firebase.initializeApp(config);
@@ -78,8 +79,8 @@ class SignUpForm extends Component {
     <div>
       <h2>Sign Up</h2>
       <form onSubmit={this.handleSignUp}>
+      <label htmlFor="username">Username:</label>
         <div>
-          <label htmlFor="username">Username:</label>
           <input
             type="text"
             id="username"
@@ -87,10 +88,11 @@ class SignUpForm extends Component {
             value={username}
             onChange={this.handleChange}
             required
+            className="custom-input"
           />
         </div>
+        <label htmlFor="email">Email:</label>
         <div>
-          <label htmlFor="email">Email:</label>
           <input
             type="email"
             id="email"
@@ -98,10 +100,11 @@ class SignUpForm extends Component {
             value={email}
             onChange={this.handleChange}
             required
+            className="custom-input"
           />
         </div>
+        <label htmlFor="password">Password:</label>
         <div>
-          <label htmlFor="password">Password:</label>
           <input
             type="password"
             id="password"
@@ -109,10 +112,11 @@ class SignUpForm extends Component {
             value={password}
             onChange={this.handleChange}
             required
+            className="custom-input"
           />
         </div>
+        <label htmlFor="phoneNumber">Phone Number:</label>
         <div>
-          <label htmlFor="phoneNumber">Phone Number:</label>
           <input
             type="tel"
             id="phoneNumber"
@@ -120,9 +124,10 @@ class SignUpForm extends Component {
             value={phoneNumber}
             onChange={this.handleChange}
             required
+            className="custom-input"
           />
         </div>
-        <button type="submit">Sign Up</button>
+        <button className="button button-primary" type="submit">Sign Up</button>
       </form>
     </div>
     </>
@@ -130,3 +135,5 @@ class SignUpForm extends Component {
 }
 
 export default SignUpForm;
+
+

@@ -2,6 +2,12 @@ import React, { Component } from 'react';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import SearchResult from './SearchResult';
+import { getAuth} from "firebase/auth";
+import getFirebaseConfig from './firebase-config';
+
+const config = getFirebaseConfig;
+const firebaseApp = firebase.initializeApp(config);
+const auth = getAuth(firebaseApp);
 
 
 class SearchBar extends Component {
@@ -35,7 +41,7 @@ class SearchBar extends Component {
                 const results = [];
                 querySnapshot.forEach((doc) => {
                     const email = doc.data().email
-                    if(!(this.props.friends.includes(email) || this.props.requestsSent.includes(email) || this.props.requestsRecieved.includes(email))) {
+                    if(!(email === auth.currentUser.email || this.props.friends.includes(email) || this.props.requestsSent.includes(email) || this.props.requestsRecieved.includes(email))) {
                         console.log(doc.data);
                         results.push(doc.data().email);
                     }

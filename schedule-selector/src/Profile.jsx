@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import SearchBar from './SearchBar';
 import axios from 'axios';
 import { getAuth} from "firebase/auth";
 import firebase from 'firebase/compat/app';
@@ -136,7 +137,10 @@ class SettingsForm extends Component {
 
 function Profile() {
     return (
-      <SettingsForm></SettingsForm>
+      <>
+        <SettingsForm></SettingsForm>
+        <SearchBar></SearchBar>
+      </>
     );
 }
 

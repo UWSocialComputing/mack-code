@@ -9,9 +9,31 @@
     text-align: center;
     cursor: pointer;
   }
-  
-  .blue {
+
+  .rectangle-button {
+    display: inline-block;
+    width: 150px;
+    height: 40px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    line-height: 1;
+    text-align: center;
+    cursor: pointer;
     background-color: #0077cc;
     color: white;
+    font-family: Optima, sans-serif;
+  }
+  
+  
+  .blue {
+    background-color: #9DD0AB
+    ;
+    color: white;
+  }
+
+  .clear {
+    background-color: white;
+    color: black;
   }
   

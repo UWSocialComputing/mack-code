@@ -19,10 +19,10 @@ const DateInput = ({ initialDate, onDateChange }) => {
   };
 
   return (
-    <div>
-      <button className="circle-button blue" onClick={handleBackward}>&lt;</button>
+    <div style={{ fontSize: '22px' }}>
+      <button style={{ fontSize: '22px' }} className="circle-button clear" onClick={handleBackward}>&lt;</button>
       <span>{startDate}</span>
-      <button className="circle-button blue" onClick={handleForward}>&gt;</button>
+      <button style={{ fontSize: '22px' }} className="circle-button clear" onClick={handleForward}>&gt;</button>
     </div>
   );
 };

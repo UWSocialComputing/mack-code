@@ -110,34 +110,21 @@ def deleteRequest(req: https_fn.Request) -> https_fn.Response:
 
         firestore_client: google.cloud.firestore.Client = firestore.client()
         user_ref = firestore_client.collection('users').document(user)
-        doc = user_ref.get()
-        if doc.exists:
-            requestsSent = doc.to_dict().get('requestsSent', [])
-            requestsRecieved = doc.to_dict().get('requestsRecieved', [])
-            if newRequest in requestsSent:
-                requestsSent.remove(newRequest)
-            if newRequest in requestsRecieved:
-                requestsRecieved.remove(newRequest)
-            user_ref.set({
-                'requestsSent': requestsSent,
-                'requestsRecieved' : requestsRecieved
-            }, merge=True)
-
-        # Delete request received to other user
-        user_ref = firestore_client.collection('users').document(newRequest)
-        doc = user_ref.get()
-        if doc.exists:
-            requestsRecieved = doc.to_dict().get('requestsRecieved', [])
-            requestsSent = doc.to_dict().get('requestsSent', [])
-            if user in requestsRecieved:
-                requestsRecieved.remove(user)
-            if user in requestsSent:
-                requestsSent.remove(user)
-            user_ref.set({
-                'requestsSent': requestsSent,
-                'requestsRecieved' : requestsRecieved
-            }, merge=True)
-        
+        request_ref = firestore_client.collection('users').document(newRequest)
+        doc1 = user_ref.get()
+        doc2 = request_ref.get()
+        if doc1.exists and doc2.exists:
+            for doc, ref, req in [(doc1, user_ref, newRequest), (doc2, request_ref, user)]:
+                requestsSent = doc.to_dict().get('requestsSent', [])
+                requestsRecieved = doc.to_dict().get('requestsRecieved', [])
+                if req in requestsSent:
+                    requestsSent.remove(req)
+                if req in requestsRecieved:
+                    requestsRecieved.remove(req)
+                ref.set({
+                    'requestsSent': requestsSent,
+                    'requestsRecieved' : requestsRecieved
+                }, merge=True)
             return https_fn.Response(f"successfully deleted pending request: {newRequest}")
         
     raise https_fn.HttpsError('invalid-argument', 'request improperly formatted')

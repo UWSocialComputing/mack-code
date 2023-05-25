@@ -41,21 +41,28 @@ class PlanTimeInterval:
         + ". Here's an idea for what to do with some friends. "
 
 @https_fn.on_request(cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post"]))
-def addFriend(req: https_fn.Request) -> https_fn.Response:
+def addOrDeleteFriend(req: https_fn.Request) -> https_fn.Response:
     json_data = req.get_json()
     if json_data:
         user = json_data['email']
         newFriend = json_data['newFriend']
+        operation = json_data['operation']
 
         firestore_client: google.cloud.firestore.Client = firestore.client()
         user_ref = firestore_client.collection('users').document(user)
-        doc = user_ref.get()
-        if doc.exists:
-            friends = doc.to_dict().get('friends', [])
-            friends.append(newFriend)
-            user_ref.set({
-                'friends': friends
-            }, merge=True)
+        friend_ref = firestore_client.collection('users').document(newFriend)
+        doc1 = user_ref.get()
+        doc2 = friend_ref.get()
+        if doc1.exists and doc2.exists:
+            for doc, ref, newFriend in [(doc1, user_ref, newFriend), (doc2, friend_ref, user)]:
+                friends = doc.to_dict().get('friends', [])
+                if operation == 'add':
+                    friends.append(newFriend)
+                elif operation == 'delete':
+                    friends.remove(newFriend)
+                ref.set({
+                    'friends': friends
+                }, merge=True)
             return https_fn.Response(f"successfully added new friend: {newFriend}")
         
     raise https_fn.HttpsError('invalid-argument', 'request improperly formatted')
@@ -72,11 +79,11 @@ def addRequest(req: https_fn.Request) -> https_fn.Response:
         user_ref = firestore_client.collection('users').document(user)
         doc = user_ref.get()
         if doc.exists:
-            sentRequests = doc.to_dict().get('sentRequests', [])
-            if newRequest not in sentRequests:
-                sentRequests.append(newRequest)
+            requestsSent = doc.to_dict().get('requestsSent', [])
+            if newRequest not in requestsSent:
+                requestsSent.append(newRequest)
                 user_ref.set({
-                    'sentRequests': sentRequests
+                    'requestsSent': requestsSent
                 }, merge=True)
 
         # Add a request received to other user
@@ -93,37 +100,32 @@ def addRequest(req: https_fn.Request) -> https_fn.Response:
             return https_fn.Response(f"successfully added pending request: {newRequest}")
         
     raise https_fn.HttpsError('invalid-argument', 'request improperly formatted')
-
+    
+@https_fn.on_request(cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post"]))
 def deleteRequest(req: https_fn.Request) -> https_fn.Response:
     json_data = req.get_json()
     if json_data:
         user = json_data['email']
         newRequest = json_data['newRequest']
 
-        # Delete request to user
         firestore_client: google.cloud.firestore.Client = firestore.client()
         user_ref = firestore_client.collection('users').document(user)
-        doc = user_ref.get()
-        if doc.exists:
-            sentRequests = doc.to_dict().get('sentRequests', [])
-            if newRequest in sentRequests:
-                sentRequests.remove(newRequest)
-                user_ref.set({
-                    'sentRequests': sentRequests
+        request_ref = firestore_client.collection('users').document(newRequest)
+        doc1 = user_ref.get()
+        doc2 = request_ref.get()
+        if doc1.exists and doc2.exists:
+            for doc, ref, req in [(doc1, user_ref, newRequest), (doc2, request_ref, user)]:
+                requestsSent = doc.to_dict().get('requestsSent', [])
+                requestsRecieved = doc.to_dict().get('requestsRecieved', [])
+                if req in requestsSent:
+                    requestsSent.remove(req)
+                if req in requestsRecieved:
+                    requestsRecieved.remove(req)
+                ref.set({
+                    'requestsSent': requestsSent,
+                    'requestsRecieved' : requestsRecieved
                 }, merge=True)
-
-        # Delete request received to other user
-        user_ref = firestore_client.collection('users').document(newRequest)
-        doc = user_ref.get()
-        if doc.exists:
-            requestsRecieved = doc.to_dict().get('requestsRecieved', [])
-            if user in requestsRecieved:
-                requestsRecieved.remove(user)
-                user_ref.set({
-                    'requestsRecieved': requestsRecieved
-                }, merge=True)
-        
-            return https_fn.Response(f"successfully added pending request: {newRequest}")
+            return https_fn.Response(f"successfully deleted pending request: {newRequest}")
         
     raise https_fn.HttpsError('invalid-argument', 'request improperly formatted')
 
@@ -167,18 +169,21 @@ def editAvailabilityForUser(req: https_fn.Request) -> https_fn.Response:
     raise https_fn.HttpsError('invalid-argument', 'request improperly formatted')
 
 @https_fn.on_request(cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post"]))
-def getSettingsForUser(req: https_fn.Request) -> https_fn.Response:
+def getUserInfo(req: https_fn.Request) -> https_fn.Response:
     user = req.args.get("email")
     if user is not None:
         firestore_client: google.cloud.firestore.Client = firestore.client()
         user_ref = firestore_client.collection('users').document(user)
         doc = user_ref.get()
         doc_as_dict = doc.to_dict()
-        settings = {
-            'maxPlans' : doc_as_dict['maxPlans'],
-            'minNotice' : doc_as_dict['minNotice']
+        userInfo = {
+            'maxPlans' : doc_as_dict.get('maxPlans', 1),
+            'minNotice' : doc_as_dict.get('minNotice', 1),
+            'friends' : doc_as_dict.get('friends', []),
+            'requestsSent' : doc_as_dict.get('requestsSent', []),
+            'requestsRecieved' : doc_as_dict.get('requestsRecieved',[])
         }
-        return https_fn.Response(json.dumps(settings))
+        return https_fn.Response(json.dumps(userInfo))
     
     raise https_fn.HttpsError('invalid-argument', 'request improperly formatted')
 
@@ -189,12 +194,12 @@ def getAvailabilityForUser(req: https_fn.Request) -> https_fn.Response:
         firestore_client: google.cloud.firestore.Client = firestore.client()
         user_ref = firestore_client.collection('users').document(user)
         doc = user_ref.get()
-        response = {'calendar': doc.to_dict()['calendar']}
+        response = {'calendar': doc.to_dict().get('calendar', [])}
         return https_fn.Response(json.dumps(response))
     
     raise https_fn.HttpsError('invalid-argument', 'request improperly formatted')
 
-
+@https_fn.on_request(cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post"]))
 def addUserInfo(req: https_fn.Request) -> https_fn.Response:
     json_data = req.get_json()
     if json_data:
@@ -206,6 +211,7 @@ def addUserInfo(req: https_fn.Request) -> https_fn.Response:
         newUser = {
             'username' : username,
             'phoneNum' : phoneNum,
+            'email' : email,
             'maxPlans' : 1,
             'minNotice' : 1,
             'friends' : [],

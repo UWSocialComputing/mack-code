@@ -4,10 +4,15 @@ import axios from 'axios';
 import { getAuth} from "firebase/auth";
 import firebase from 'firebase/compat/app';
 import getFirebaseConfig from './firebase-config';
+import './index.css'
 
 const editSettingsUrl='https://editsettings-7g4ibqksta-uc.a.run.app'
 
-const getSettingsUrl='https://getsettingsforuser-7g4ibqksta-uc.a.run.app'
+const getUserInfoUrl='https://getuserinfo-7g4ibqksta-uc.a.run.app'
+
+const addOrDeleteFriendUrl = 'https://addordeletefriend-7g4ibqksta-uc.a.run.app'
+
+const deleteRequestUrl = 'https://deleterequest-7g4ibqksta-uc.a.run.app'
 
 const config = getFirebaseConfig;
 const firebaseApp = firebase.initializeApp(config);
@@ -16,21 +21,72 @@ const auth = getAuth(firebaseApp);
 class SettingsForm extends Component {
   constructor(props) {
     super(props);
-    this.state = { maxHangoutValue: 1, daysInAdvanceValue: 1};
+    this.state = { maxHangoutValue: 1, daysInAdvanceValue: 1, friends: [], requestsSent: [], requestsRecieved: []};
   }
   
   componentDidMount() {
+    this.helper()
+  }
+
+  componentDidUpdate() {
+    this.helper()
+  }
+
+  helper() {
     if(auth.currentUser.email) {
-      axios.get(getSettingsUrl, { params: { email: auth.currentUser.email } })
+      axios.get(getUserInfoUrl, { params: { email: auth.currentUser.email } })
       .then(response => {
         this.setState({
           maxHangoutValue: response.data.maxPlans,
-          daysInAdvanceValue: response.data.minNotice 
+          daysInAdvanceValue: response.data.minNotice,
+          friends: response.data.friends,
+          requestsSent: response.data.requestsSent,
+          requestsRecieved: response.data.requestsRecieved
         })
       })
       .catch(err => {
         alert(err)
       })
+    }
+  }
+
+  addFriend = (friend) => {
+    if(auth.currentUser.email) {
+      const request = {
+        email: auth.currentUser.email,
+        newFriend: friend,
+        operation: 'add'
+      };
+      axios.post(addOrDeleteFriendUrl, request, {headers: {'Content-Type': 'application/json'}})
+        .then(
+          this.declineRequest(friend)
+        )
+        .catch(err => alert(err));
+    }
+  }
+
+  deleteFriend = (friend) => {
+    if(auth.currentUser.email) {
+      const request = {
+        email: auth.currentUser.email,
+        newFriend: friend,
+        operation: 'delete'
+      };
+      axios.post(addOrDeleteFriendUrl, request, {headers: {'Content-Type': 'application/json'}})
+        .then()
+        .catch(err => alert(err));
+    }
+  }
+
+  declineRequest = (friend) => {
+    if(auth.currentUser.email) {
+      const request = {
+        email: auth.currentUser.email,
+        newRequest: friend,
+      };
+      axios.post(deleteRequestUrl, request, {headers: {'Content-Type': 'application/json'}})
+        .then()
+        .catch(err => alert(err));
     }
   }
 
@@ -62,12 +118,12 @@ class SettingsForm extends Component {
   handleSubmit = (e) => {
     e.preventDefault()
     if(auth.currentUser.email) {
-      var response = {
+      const request = {
         email: auth.currentUser.email,
         maxPlans: this.state.maxHangoutValue,
         minNotice: this.state.daysInAdvanceValue
       };
-      axios.post(editSettingsUrl, response, {headers: {'Content-Type': 'application/json'}})
+      axios.post(editSettingsUrl, request, {headers: {'Content-Type': 'application/json'}})
       .then(data => alert("successfully updated your profile settings"))
       .catch(err => alert(err));
     }
@@ -76,7 +132,7 @@ class SettingsForm extends Component {
   render() {
     return (
       <div>
-      <h1>Welcome to your profile page: {auth.currentUser.email}</h1>
+      <h2>Welcome to your profile page: {auth.currentUser.email}</h2>
       <form onSubmit={this.handleSubmit}>
         <div>
           <label htmlFor="maxHangoutValue">Up to how many plans would you want to receive? :</label>
@@ -100,18 +156,46 @@ class SettingsForm extends Component {
         </div>
         <button className="rectangle-button blue" type="submit">Submit</button>
       </form>
+      <div>
+        <h3> Friends </h3>
+        <ul>
+        {
+          this.state.friends.map(friend => {
+            return <div> {friend} <button type='button' onClick={() => this.deleteFriend(friend)}> delete friend </button> </div>
+          })
+        }
+        </ul>
+        <h3>Pending Friend Requests</h3>
+        <ul>
+        {
+          this.state.requestsRecieved.map(friend => {
+              return <div> {friend} <button type='button' onClick={() => this.addFriend(friend)}> accept </button> <button type='button' onClick={() => this.declineRequest(friend)}> decline </button> </div>
+          })
+        }
+        </ul>
+        <h3> Sent Friend Requests</h3>
+        <ul>
+        {
+          this.state.requestsSent.map(friend => {
+              return <div> {friend} <button type='button' onClick={() => this.declineRequest(friend)}> delete request </button> </div>
+          })
+        }
+        </ul>
+      </div>
+      <SearchBar friends={this.state.friends} requestsSent={this.state.requestsSent} requestsRecieved={this.state.requestsRecieved}></SearchBar>
       </div>
     );
   }
 }
 
 function Profile() {
+  if(auth.currentUser) {
     return (
-      <>
-        <SettingsForm></SettingsForm>
-        <SearchBar></SearchBar>
-      </>
+      <SettingsForm></SettingsForm>
     );
+  } else {
+    return <h2> you are not signed in</h2>
+  }
 }
 
 export default Profile;

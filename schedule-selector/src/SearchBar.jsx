@@ -4,6 +4,7 @@ import 'firebase/compat/firestore';
 import SearchResult from './SearchResult';
 import { getAuth} from "firebase/auth";
 import getFirebaseConfig from './firebase-config';
+import './LoginForm.css'
 
 const config = getFirebaseConfig;
 const firebaseApp = firebase.initializeApp(config);
@@ -69,12 +70,16 @@ class SearchBar extends Component {
         <div>
             {searchResults.length > 0 ? (
             <div>
+                <ul>
                 {searchResults.map((email, index) => (
                 <SearchResult email={email}></SearchResult>
                 ))}
+                </ul>
             </div>
             ) : (
+            <ul>
             <p>No users found</p>
+            </ul>
             )}
         </div></>
         );

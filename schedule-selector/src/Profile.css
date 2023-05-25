@@ -1,0 +1,59 @@
+.delete-button {
+    display: inline-block;
+    width: 70px;
+    height: 30px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    line-height: 1;
+    text-align: center;
+    cursor: pointer;
+    background-color: rgb(129, 127, 127);
+    color: white;
+    font-family: Optima, sans-serif;
+  }
+
+  .accept-button {
+    display: inline-block;
+    width: 70px;
+    height: 30px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    line-height: 1;
+    text-align: center;
+    cursor: pointer;
+    background-color: #9DD0AB;
+    color: white;
+    font-family: Optima, sans-serif;
+  }
+
+  .add-button {
+    display: inline-block;
+    width: 90px;
+    height: 25px;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
+    line-height: 1;
+    text-align: center;
+    cursor: pointer;
+    background-color: #9DD0AB;
+    color: white;
+    font-family: Optima, sans-serif;
+  }
+
+  .decline-button {
+    display: inline-block;
+    width: 70px;
+    height: 30px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    line-height: 1;
+    text-align: center;
+    cursor: pointer;
+    background-color: rgb(129, 127, 127);
+    color: white;
+    font-family: Optima, sans-serif;
+  }

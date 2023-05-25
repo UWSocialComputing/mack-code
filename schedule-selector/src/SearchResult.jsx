@@ -3,6 +3,8 @@ import axios from 'axios';
 import { getAuth} from "firebase/auth";
 import firebase from 'firebase/compat/app';
 import getFirebaseConfig from './firebase-config';
+import './LoginForm.css'
+import './Profile.css'
 
 const addRequestUrl = 'https://addrequest-7g4ibqksta-uc.a.run.app'
 const config = getFirebaseConfig;
@@ -43,8 +45,10 @@ class SearchResult extends Component {
     if(!isPending) {
       return (
           <div>
+            <p>
             <span>{email}</span>
-            <button onClick={this.handleAddFriend}>Add Friend</button>
+            <button className="add-button" onClick={this.handleAddFriend}>Add Friend</button>
+            </p>
           </div>
       )
     }

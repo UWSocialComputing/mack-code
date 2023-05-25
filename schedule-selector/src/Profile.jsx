@@ -5,6 +5,8 @@ import { getAuth} from "firebase/auth";
 import firebase from 'firebase/compat/app';
 import getFirebaseConfig from './firebase-config';
 import './index.css'
+import './Profile.css'
+import './LoginForm.css'
 
 const editSettingsUrl='https://editsettings-7g4ibqksta-uc.a.run.app'
 
@@ -132,6 +134,8 @@ class SettingsForm extends Component {
   render() {
     return (
       <div>
+      <div style={{ borderTop: '1px solid black', width: '100%', display: 'flex', justifyContent: 'space-between' }}></div>
+      <p>
       <h2>Welcome to your profile page: {auth.currentUser.email}</h2>
       <form onSubmit={this.handleSubmit}>
         <div>
@@ -141,6 +145,7 @@ class SettingsForm extends Component {
             id="maxHangoutValue"
             name="maxHangoutValue"
             value={this.state.maxHangoutValue}
+            style={{ width: '50px' }}
             onChange={this.handleMaxPlansChange}
           />
         </div>
@@ -151,38 +156,45 @@ class SettingsForm extends Component {
             id="daysInAdvance"
             name="daysInAdvance"
             value={this.state.daysInAdvanceValue}
+            style={{ width: '50px' }}
             onChange={this.handleDaysChange}
           />
         </div>
         <button className="rectangle-button blue" type="submit">Submit</button>
       </form>
+      </p>
       <div>
-        <h3> Friends </h3>
-        <ul>
+        <h3> Add Friends </h3>
+        <SearchBar friends={this.state.friends} requestsSent={this.state.requestsSent} requestsRecieved={this.state.requestsRecieved}></SearchBar>
+        <h3> My Friends </h3>
+        <ul><p>
         {
           this.state.friends.map(friend => {
-            return <div> {friend} <button type='button' onClick={() => this.deleteFriend(friend)}> delete friend </button> </div>
+            return <div> {friend} <button className="delete-button" type='button' onClick={() => this.deleteFriend(friend)}> delete </button> </div>
           })
         }
+        </p>
         </ul>
         <h3>Pending Friend Requests</h3>
-        <ul>
+        <ul><p>
         {
           this.state.requestsRecieved.map(friend => {
-              return <div> {friend} <button type='button' onClick={() => this.addFriend(friend)}> accept </button> <button type='button' onClick={() => this.declineRequest(friend)}> decline </button> </div>
+              return <div> {friend} <button className="accept-button" type='button' onClick={() => this.addFriend(friend)}> accept </button> <button className="decline-button" type='button' onClick={() => this.declineRequest(friend)}> decline </button> </div>
           })
         }
+        </p>
         </ul>
         <h3> Sent Friend Requests</h3>
         <ul>
+        <p>
         {
           this.state.requestsSent.map(friend => {
-              return <div> {friend} <button type='button' onClick={() => this.declineRequest(friend)}> delete request </button> </div>
+              return <div> {friend} <button className="delete-button" type='button' onClick={() => this.declineRequest(friend)}> delete </button> </div>
           })
         }
+        </p>
         </ul>
       </div>
-      <SearchBar friends={this.state.friends} requestsSent={this.state.requestsSent} requestsRecieved={this.state.requestsRecieved}></SearchBar>
       </div>
     );
   }

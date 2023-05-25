@@ -26,6 +26,11 @@
     border-radius: 6px;
   }
 
+  .button-primary:hover {
+    background-color: #9dd0aba8;
+    
+  }
+
   .button-alt {
     background-color: white;
     margin: 0 auto; /* Center the input box horizontally */

@@ -65,19 +65,21 @@ class Home extends React.Component {
   
   render() {
     return (
-      <div>
-        <div style={{ borderTop: '1px solid black', width: '100%', display: 'flex', justifyContent: 'space-between' }}>
+      <div >
+        
+        <div style={{ marginLeft:'2%', marginRight:'2%', borderTop: '1px solid black', width: '95%', display: 'flex', justifyContent: 'space-between' }}>
           <p style={{ fontSize: '22px' }}>Enter times you would be willing to hang out below:</p>
           <div style={{ marginTop: '20px' }}>
-          <TimeInput onSubmit={this.handleTimeSubmit}/>
+          
+          <button className="rectangle-button blue" type="button" onClick={this.onSubmitAvailabilityClick}>Submit Availability</button>
           </div>
+          
         </div>
+        <div style={{marginLeft:'2%', marginRight:'2%',}}><p><DateInput initialDate="2023-05-21" onDateChange={this.handleDateChange} /></p></div>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <DateInput initialDate="2023-05-21" onDateChange={this.handleDateChange} />
-        <button className="rectangle-button blue" type="button" onClick={this.onSubmitAvailabilityClick}>Submit Availability</button>
         </div>       
         <div className="container">
-      <div className="text-container">
+      <div style={{marginLeft: '5%', marginRight: '3%'}} className="text-container">
         <p className="scaling-text">Sunday</p>
         <p className="scaling-text">Monday</p>
         <p className="scaling-text">Tuesday</p>
@@ -87,6 +89,7 @@ class Home extends React.Component {
         <p className="scaling-text">Saturday</p>
       </div>
     </div>
+    <div style={{marginLeft: '3%', marginRight: '3%'}}>
         <ScheduleSelector
         selection={this.state.schedule}
         numDays={7}
@@ -95,6 +98,8 @@ class Home extends React.Component {
         startDate={this.state.date}
         hourlyChunks={2}
         onChange={this.handleChange} />
+        <p><TimeInput onSubmit={this.handleTimeSubmit}/></p>
+        </div>
       </div>
     )
   }

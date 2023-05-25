@@ -134,8 +134,8 @@ class SettingsForm extends Component {
   render() {
     return (
       <div>
-      <div style={{ borderTop: '1px solid black', width: '100%', display: 'flex', justifyContent: 'space-between' }}></div>
-      <p>
+      <div style={{marginLeft:'2%', marginRight:'2%', borderTop: '1px solid black', width: '95%', display: 'flex', justifyContent: 'space-between' }}></div>
+      <div style={{marginLeft: '2%'}}><p>
       <h2>Welcome to your profile page: {auth.currentUser.email}</h2>
       <form onSubmit={this.handleSubmit}>
         <div>
@@ -163,19 +163,12 @@ class SettingsForm extends Component {
         <button className="rectangle-button blue" type="submit">Submit</button>
       </form>
       </p>
+      </div>
       <div>
-        <h3> Add Friends </h3>
         <SearchBar friends={this.state.friends} requestsSent={this.state.requestsSent} requestsRecieved={this.state.requestsRecieved}></SearchBar>
-        <h3> My Friends </h3>
-        <ul><p>
-        {
-          this.state.friends.map(friend => {
-            return <div> {friend} <button className="delete-button" type='button' onClick={() => this.deleteFriend(friend)}> delete </button> </div>
-          })
-        }
-        </p>
-        </ul>
-        <h3>Pending Friend Requests</h3>
+        <div className="columns-container" >
+        <div className="column">
+        <p style={{ fontSize: '25px'}}>Pending Friend Requests</p>
         <ul><p>
         {
           this.state.requestsRecieved.map(friend => {
@@ -184,7 +177,7 @@ class SettingsForm extends Component {
         }
         </p>
         </ul>
-        <h3> Sent Friend Requests</h3>
+        <p style={{ fontSize: '25px'}}>Sent Friend Requests</p>
         <ul>
         <p>
         {
@@ -194,6 +187,19 @@ class SettingsForm extends Component {
         }
         </p>
         </ul>
+        </div>
+        <div className="column-wide">
+        <p style={{ fontSize: '25px'}}>My Friends </p>
+        <ul><p>
+        {
+          this.state.friends.map(friend => {
+            return <div> {friend} <button className="delete-button" type='button' onClick={() => this.deleteFriend(friend)}> delete </button> </div>
+          })
+        }
+        </p>
+        </ul>
+        </div>
+      </div>
       </div>
       </div>
     );

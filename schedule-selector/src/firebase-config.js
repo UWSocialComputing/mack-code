@@ -7,11 +7,11 @@
  * 4. Copy the config object snippet, then add it here.
  */
 
-
 import 'firebase/auth';
 import 'firebase/database';
 
 const config = {
+    
 };
 
 export function getFirebaseConfig() {

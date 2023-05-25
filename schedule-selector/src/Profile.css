@@ -8,9 +8,13 @@
     line-height: 1;
     text-align: center;
     cursor: pointer;
-    background-color: rgb(129, 127, 127);
+    background-color: #817f7f;
     color: white;
     font-family: Optima, sans-serif;
+  }
+
+  .delete-button:hover{
+    background-color: #817f7f89;
   }
 
   .accept-button {
@@ -28,6 +32,11 @@
     font-family: Optima, sans-serif;
   }
 
+  .accept-button:hover {
+    background-color: #9dd0aba8;
+  }
+
+
   .add-button {
     display: inline-block;
     width: 90px;
@@ -43,6 +52,10 @@
     font-family: Optima, sans-serif;
   }
 
+  .add-button:hover {
+    background-color: #9dd0aba8;
+  }
+
   .decline-button {
     display: inline-block;
     width: 70px;
@@ -56,6 +69,9 @@
     background-color: rgb(129, 127, 127);
     color: white;
     font-family: Optima, sans-serif;
+  }
+  .decline-button:hover{
+    background-color: #817f7f89;
   }
 
   .columns-container {

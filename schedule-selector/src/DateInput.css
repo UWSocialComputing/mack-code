@@ -24,6 +24,10 @@
     color: white;
     font-family: Optima, sans-serif;
   }
+
+  .rectangle-button:hover {
+    background-color: #9dd0aba8;
+  }
   
   
   .blue {

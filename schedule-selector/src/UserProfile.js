@@ -18,18 +18,19 @@ const UserProfile = () => {
             {isSignUp ? (
                 <div className="centered-element">
                 <>
-                
+                <p>
                 <SignUpForm/>
-                <p>Already have an account? <button style={{ textDecoration: 'underline' }} className="button button-alt" onClick={toggleForm}>Log In</button></p>
+                Already have an account? <button style={{ textDecoration: 'underline' }} className="button button-alt" onClick={toggleForm}>Log In</button></p>
                 
                 </>
                 </div>
             ) : (
                 <div className="centered-element">
                 <>
+                <p>
                 <LoginForm />
                 
-                <p >Don't have an account? <button style={{ textDecoration: 'underline' }} className="button button-alt" onClick={toggleForm}>Sign Up</button></p>
+                Don't have an account? <button style={{ textDecoration: 'underline' }} className="button button-alt" onClick={toggleForm}>Sign Up</button></p>
                 </>
                 </div>
             )}

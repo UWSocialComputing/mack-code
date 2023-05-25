@@ -1,7 +1,7 @@
 .delete-button {
     display: inline-block;
     width: 70px;
-    height: 30px;
+    height: 25px;
     border-radius: 8px;
     border: none;
     font-size: 16px;
@@ -46,7 +46,7 @@
   .decline-button {
     display: inline-block;
     width: 70px;
-    height: 30px;
+    height: 25px;
     border-radius: 8px;
     border: none;
     font-size: 16px;
@@ -57,3 +57,46 @@
     color: white;
     font-family: Optima, sans-serif;
   }
+
+  .columns-container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    clear: both;
+    background-color: #d8f0f6;
+    border-radius: 10px;
+    margin-right: 50px;
+    margin-left: 100px;
+    min-height: 100vh
+    
+  }
+  .column-wide {
+    flex-basis: 60%; /* Adjust the flex-basis value as desired */
+    background-color: #d8f0f6;
+    border-radius: 10px;
+    padding: 16px;
+    margin-right: 100px;
+    min-height: 100vh
+    
+  }
+
+  .searching{
+    background-color: lightgray;
+    width: 80%; /* Adjust the width as needed */
+    height: 30px;
+    padding: 8px;
+    border: none;
+    border-radius: 8px;
+    margin: 0 auto; /* Center the input box horizontally */
+    margin-bottom: 8px;
+    margin-left: 10%;
+  }
+
+  
+  

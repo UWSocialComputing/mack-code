@@ -5,6 +5,7 @@ import SearchResult from './SearchResult';
 import { getAuth} from "firebase/auth";
 import getFirebaseConfig from './firebase-config';
 import './LoginForm.css'
+import './Profile.css'
 
 const config = getFirebaseConfig;
 const firebaseApp = firebase.initializeApp(config);
@@ -60,14 +61,14 @@ class SearchBar extends Component {
         <><div className="w-full max-w-xl flex mx-auto p-20 text-xl">
             <input
                 type="text"
-                className="w-full placeholder-gray-400 text-gray-900 p-4"
-                placeholder="Search"
+                className="w-full placeholder-gray-400 text-gray-900 p-4 searching"
+                placeholder="Find Friends"
                 onChange={this.handleInputChange}
                 value={searchQuery}
             />
-            <button className="bg-white p-4">🔍</button>
+            <button style={{ fontSize: '15px', padding: '10px 20px' }} className="bg-white p-4">🔍</button>
         </div>
-        <div>
+        <div className="container">
             {searchResults.length > 0 ? (
             <div>
                 <ul>

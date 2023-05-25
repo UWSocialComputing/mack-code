@@ -7,7 +7,7 @@ import './NavBar.css';
 function Navbar() {
   return (
     <nav>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <div style={{ marginLeft:'2%', marginRight:'2%', display: 'flex', justifyContent: 'space-between' }}>
       <Link to="/calendar"><img src={logo} alt="Logo" className="left-image" /></Link>
       <Link to="/profile"><img src={profile} alt="Profile" className="right-image" /></Link>
     </div>

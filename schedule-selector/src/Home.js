@@ -67,7 +67,7 @@ class Home extends React.Component {
     return (
       <div >
         
-        <div style={{ borderTop: '1px solid black', width: '100%', display: 'flex', justifyContent: 'space-between' }}>
+        <div style={{ marginLeft:'2%', marginRight:'2%', borderTop: '1px solid black', width: '95%', display: 'flex', justifyContent: 'space-between' }}>
           <p style={{ fontSize: '22px' }}>Enter times you would be willing to hang out below:</p>
           <div style={{ marginTop: '20px' }}>
           
@@ -75,7 +75,7 @@ class Home extends React.Component {
           </div>
           
         </div>
-        <p><DateInput initialDate="2023-05-21" onDateChange={this.handleDateChange} /></p>
+        <div style={{marginLeft:'2%', marginRight:'2%',}}><p><DateInput initialDate="2023-05-21" onDateChange={this.handleDateChange} /></p></div>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         </div>       
         <div className="container">

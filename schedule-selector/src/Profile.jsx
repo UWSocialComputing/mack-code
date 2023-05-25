@@ -134,7 +134,7 @@ class SettingsForm extends Component {
   render() {
     return (
       <div>
-      <div style={{borderTop: '1px solid black', width: '100%', display: 'flex', justifyContent: 'space-between' }}></div>
+      <div style={{marginLeft:'2%', marginRight:'2%', borderTop: '1px solid black', width: '95%', display: 'flex', justifyContent: 'space-between' }}></div>
       <div style={{marginLeft: '2%'}}><p>
       <h2>Welcome to your profile page: {auth.currentUser.email}</h2>
       <form onSubmit={this.handleSubmit}>

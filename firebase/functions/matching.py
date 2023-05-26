@@ -121,11 +121,13 @@ def plannedTimes(users, friends):
             if user_availability[available_slots[j + 1]] == users_available:
                 i += 1
                 j += 1
-                end_time = available_slots[i + 1]
+                end_time = available_slots[j + 1]
             # Less users available afterwards
             else:
                 users_available_sub =  user_availability[available_slots[j + 1]].intersection(users_available)
                 break
+                # Think about helper methods to deal with subsets/supersets
+                # helper method to determine priority
                 # if len(users_available_sub) < 2:
                 #     break
                 # Potential if statement to continue with smaller group
@@ -171,13 +173,14 @@ def main():
 
     plans = []
     # Iterate through all friend bubbles
+    # Randomize order of friend_bubbles
     for friend_bubble in friend_bubbles:
         potential_plans = plannedTimes(users, friend_bubble)
 
         # Method / Rules to determine if any plans are good or not
         plan = potential_plans[0] # REPLACE WITH ACTUAL CHECKING SYSTEM
 
-        potential_plans.append(plan)
+        plans.append(plan)
 
         # Update users to reflect planned times no longer available for each user in plan
         users = update_users(users, plan)

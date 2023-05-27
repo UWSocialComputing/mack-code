@@ -6,6 +6,10 @@ import google.cloud.firestore
 import os
 import json
 
+#imports for sending plans and querying
+from matching import create_plan_timeslots, build_user_map, find_friend_bubbles, planned_times, update_users
+import pandas as pd
+
 # The Cloud Functions for Firebase SDK to create Cloud Functions and set up triggers.
 from firebase_functions import https_fn, options
 
@@ -217,7 +221,8 @@ def addUserInfo(req: https_fn.Request) -> https_fn.Response:
             'friends' : [],
             'requestsSent' : [],
             'requestsRecieved' : [],
-            'calendar' : []
+            'calendar' : [],
+            'planTimes' : []
         }
         try:
             firestore_client.collection('users').document(email).set(newUser)
@@ -260,3 +265,38 @@ def getPlans(req: https_fn.Request) -> https_fn.Response:
         twilio_client.messages.create(body=output,from_=twilio_phone_num,to=phoneNum)
    
     return https_fn.Response("hello world")
+
+    @scheduler_fn.on_schedule(schedule="every day 06:00")
+        def sendPlans(event: scheduler_fn.ScheduledEvent) -> None:
+            #array of final plans - start_time, end_time, duration, users
+            plans = create_plan_timeslots()
+            #update users database
+
+            #find activities for each planned time
+            firestore_client: google.cloud.firestore.Client = firestore.client()
+            
+            activities_ref = list(firestore_client.collection('activities').stream()
+            
+            activities_dict = list(map(lambda x: x.to_dict(), activities_ref))
+            df = pd.DataFrame(activities_dict)
+            
+
+            for plan in plans:
+                results = df.query("'StartMinuteTime' <= @plan.start_time_minutes and 'EndMinuteTime' >= @plan.end_time_minutes and 'MinDuration' <= @plan.duration and 'MaxDuration' >= @plan.duration")
+                resultsToSend = results.sample(n=min(2, len(results)))
+                resultsToSendArr = resultsToSend.to_dict('records')
+
+                description = ""
+                
+                for result in resultsToSendArr:
+                    
+                    description += 
+                    description += result["Activity Name"] + "\n \n" + result["Description"] + "\n \n"
+                
+
+            #send twilio message
+            
+
+     @scheduler_fn.on_schedule(schedule="every day 05:00")
+        def deleteAvailability(event: scheduler_fn.ScheduledEvent) -> None:
+

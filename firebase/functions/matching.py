@@ -6,6 +6,7 @@ import json
 import google.cloud.firestore
 import os
 import json
+import random
 
 from google.cloud import firestore
 from firebase_admin import initialize_app
@@ -17,7 +18,7 @@ from google.cloud import firestore
 firestore_client: google.cloud.firestore.Client = firestore.client()
 
 # Define a function to retrieve data from Firestore and build the map
-def build_user_map(request):
+def build_user_map():
     user_map = {}
 
     # Retrieve all documents from the Firestore collection
@@ -57,7 +58,7 @@ def build_user_map(request):
     return user_map
 
 # Return all potential subsets of groupings / friend bubbles. Demonstrate which calendars to compare
-def findFriendsBubbles(users):
+def find_friend_bubbles(users):
     visited = set()
     friend_bubbles = []
 
@@ -93,7 +94,7 @@ def findFriendsBubbles(users):
     return friend_bubbles
 
 # Match user availability of a single friend bubble
-def plannedTimes(users, friends):
+def planned_times(users, friends):
     # Dictionary to store available users for each time slot
     user_availability = {}  
 
@@ -106,37 +107,36 @@ def plannedTimes(users, friends):
     # List to store the Planned Time objects
     planned_times = [] 
 
-    available_slots = sorted(user_availability.keys())
+    time_slots = sorted(user_availability.keys())
     i = 0
-    while i < len(available_slots):
-        start_time = available_slots[i]
-        end_time = start_time
+    while i < len(time_slots):
+        start_time = time_slots[i]
+        end_time = start_time + timedelta(minutes=30)
 
         users_available = user_availability[start_time]
 
-        # Extend the time slot if the next slot is also available for the same users
+        # While timeslots are consecutive
         j = i
-        while i < len(available_slots) - 1 and available_slots[j + 1] - end_time <= timedelta(minutes=30):
+        while j < len(time_slots) - 1 and time_slots[j + 1] == end_time:
+            same_users_available =  user_availability[time_slots[j + 1]].intersection(users_available)
+
             # Same users available
-            if user_availability[available_slots[j + 1]] == users_available:
+            if same_users_available == users_available:
                 i += 1
                 j += 1
-                end_time = available_slots[j + 1]
-            # Less users available afterwards
+                end_time += timedelta(minutes=30)
             else:
-                users_available_sub =  user_availability[available_slots[j + 1]].intersection(users_available)
                 break
-                # Think about helper methods to deal with subsets/supersets
-                # helper method to determine priority
-                # if len(users_available_sub) < 2:
-                #     break
-                # Potential if statement to continue with smaller group
-
+        
         duration = (start_time - end_time).total_seconds() / 60
-        if duration > 90:
+        start_time_minutes = start_time.hour * 60 + start_time.minute 
+        end_time_minutes = end_time.hour * 60 + end_time.minute
+        if duration >= 90:
             planned_time = {
                 'start_time': start_time,
+                'start_time_minutes': start_time_minutes,
                 'end_time': end_time,
+                'end_time_minutes': end_time_minutes,
                 'duration' : (start_time - end_time).total_seconds() / 60, 
                 'users_available': users_available
             }
@@ -158,31 +158,53 @@ def update_users(users, plan):
         time_slots.add(current_time)
         current_time += timedelta(minutes=30)
 
+    time_strings = []
+    for time in time_slots:
+        time_strings.append(my_datetime.strftime('%Y-%m-%dT%H:%M:%S.%fZ'))
+
     for user in plan.users_available:
         users[user]['calendar'] = users[user]['calendar'] - time_slots
-    
+        
+        user_ref = firestore_client.collection('users').document(user)
+        doc = user_ref.get()
+        if doc.exists:
+            try:
+                plans = time_strings + users[user]['plannedTimes'] 
+                user_ref.set({
+                    planTimes: plans
+                })
+                print("Successfully update plans for " + user)
+            except:
+                print("Error")
+
     return users
 
 # Potentially putting it all together
-def main():
+def create_plan_timeslots():
     # Build users list with preprocessed data
-    users = build_user_graph()
+    users = build_user_map()
 
     # Establish all the friend bubbles that exist
-    friend_bubbles = establish_friend_bubbles(users)
+    friend_bubbles = find_friend_bubbles(users)
 
     plans = []
-    # Iterate through all friend bubbles
-    # Randomize order of friend_bubbles
-    for friend_bubble in friend_bubbles:
-        potential_plans = plannedTimes(users, friend_bubble)
 
-        # Method / Rules to determine if any plans are good or not
-        plan = potential_plans[0] # REPLACE WITH ACTUAL CHECKING SYSTEM
+    # Randomize order of friend_bubbles
+    random.shuffle(friend_bubbles)
+
+    # Iterate through all friend bubbles
+    for friend_bubble in friend_bubbles:
+        potential_plans = planned_times(users, friend_bubble)
+
+        if len(plan) == 0:
+            break
+
+        # Pick one plan for each friend bubble
+        plan = potential_plans[0] 
 
         plans.append(plan)
 
         # Update users to reflect planned times no longer available for each user in plan
         users = update_users(users, plan)
 
-    # Send messages to Twillio
+    return plan

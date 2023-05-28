@@ -11,7 +11,6 @@ import 'firebase/auth';
 import 'firebase/database';
 
 const config = {
-    
 };
 
 export function getFirebaseConfig() {

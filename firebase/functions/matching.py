@@ -15,6 +15,14 @@ db = firestore.client()
 
 # Access Firestore client
 firestore_client = firestore.client()
+class PlanTimeInterval:
+    def __init__(self, start_time, start_time_minutes, end_time, end_time_minutes, duration, users_available):
+        self.start_time = start_time
+        self.start_time_minutes = start_time_minutes
+        self.end_time = end_time
+        self.end_time_minutes = end_time_minutes
+        self.duration = duration
+        self.users_available = users_available
 
 # Define a function to retrieve data from Firestore and build the map
 def build_user_map():
@@ -64,7 +72,7 @@ def find_friend_bubbles(users):
         visited.add(user)
         bubble.add(user)
 
-        if(check_validity(bubble)):
+        if(check_validity(bubble, users)):
             if(len(bubble) > 1):
                 friend_bubbles.add(frozenset(bubble))
             
@@ -82,7 +90,7 @@ def find_friend_bubbles(users):
 
     return friend_bubbles
 
-def check_validity(bubble):
+def check_validity(bubble, users):
     for u1 in bubble:
         for u2 in bubble:
             if u2 != u1 and u2 not in users[u1]['friends']:
@@ -98,7 +106,7 @@ def planned_times(users, friends):
         for time_slot in users[user]['calendar']:
             if time_slot not in user_availability:
                 user_availability[time_slot] = set()
-            user_availability[time_slot].add(user['email'])
+            user_availability[time_slot].add(user)
 
     # List to store the Planned Time objects
     planned_times = [] 
@@ -124,24 +132,24 @@ def planned_times(users, friends):
             else:
                 break
         
-        duration = (start_time - end_time).total_seconds() / 60
+        duration = (end_time - start_time).total_seconds() / 60
         start_time_minutes = start_time.hour * 60 + start_time.minute 
         end_time_minutes = end_time.hour * 60 + end_time.minute
         if duration >= 90:
-            planned_time = {
-                'start_time': start_time,
-                'start_time_minutes': start_time_minutes,
-                'end_time': end_time,
-                'end_time_minutes': end_time_minutes,
-                'duration' : (start_time - end_time).total_seconds() / 60, 
-                'users_available': users_available
-            }
-
+            planned_time = PlanTimeInterval(
+                start_time=start_time,
+                start_time_minutes=start_time_minutes,
+                end_time=end_time,
+                end_time_minutes=end_time_minutes,
+                duration=duration, 
+                users_available=users_available
+            )
             planned_times.append(planned_time)
 
         i += 1
     
-    return planned_times.sort(key=lambda x: x.duration, reverse=True)
+    planned_times.sort(key=lambda x: x.duration, reverse=True)
+    return planned_times
 
 def update_users(users, plan):
     # Create a list of date objects to remove from each users calendar
@@ -181,7 +189,7 @@ def create_plan_timeslots():
     users = build_user_map()
 
     # Establish all the friend bubbles that exist
-    friend_bubbles = find_friend_bubbles(users)
+    friend_bubbles = list(find_friend_bubbles(users))
 
     plans = []
 
@@ -192,7 +200,7 @@ def create_plan_timeslots():
     for friend_bubble in friend_bubbles:
         potential_plans = planned_times(users, friend_bubble)
 
-        if len(plan) == 0:
+        if len(potential_plans) == 0:
             break
 
         # Pick one plan for each friend bubble
@@ -201,27 +209,8 @@ def create_plan_timeslots():
         plans.append(plan)
 
         # Update users to reflect planned times no longer available for each user in plan
-        users = update_users(users, plan)
+        # users = update_users(users, plan)
 
-    return plan
+    return plans
 
-# test
-# Build users list with preprocessed data
-users = build_user_map()
-
-for user in users:
-    print(user)
-    print(users[user]['friends'])
-    print("\n")
-
-print(">>>>>>>")
-
-# Establish all the friend bubbles that exist
-friend_bubbles = list(find_friend_bubbles(users))
-
-print(friend_bubbles)
-
-plans = []
-
-# Randomize order of friend_bubbles
-random.shuffle(friend_bubbles)
+print(create_plan_timeslots())

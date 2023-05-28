@@ -10,7 +10,7 @@ from firebase_admin import firestore, credentials
 # Use the application default credentials.
 cred = credentials.ApplicationDefault()
 
-firebase_admin.initialize_app(credentials.Certificate('firebase/functions/matching.py'))
+firebase_admin.initialize_app(credentials.Certificate(''))
 db = firestore.client()
 
 # Access Firestore client
@@ -118,10 +118,11 @@ def planned_times(users, friends):
         end_time = start_time + timedelta(minutes=30)
 
         users_available = user_availability[start_time]
+        duration = 30
 
         # While timeslots are consecutive
         j = i
-        while j < len(time_slots) - 1 and time_slots[j + 1] == end_time:
+        while j < len(time_slots) - 1 and time_slots[j + 1] == end_time and duration < 360 and len(users_available) > 1:
             same_users_available =  user_availability[time_slots[j + 1]].intersection(users_available)
 
             # Same users available
@@ -129,6 +130,7 @@ def planned_times(users, friends):
                 i += 1
                 j += 1
                 end_time += timedelta(minutes=30)
+                duration += 30
             else:
                 break
         

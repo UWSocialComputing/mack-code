@@ -10,7 +10,7 @@ from firebase_admin import firestore, credentials
 # Use the application default credentials.
 cred = credentials.ApplicationDefault()
 
-firebase_admin.initialize_app(credentials.Certificate(''))
+firebase_admin.initialize_app(credentials.Certificate('firebase/functions/matching.py'))
 db = firestore.client()
 
 # Access Firestore client
@@ -164,7 +164,7 @@ def update_users(users, plan):
 
     time_strings = []
     for time in time_slots:
-        time_strings.append(datetime.strftime('%Y-%m-%dT%H:%M:%S.%fZ'))
+        time_strings.append(datetime.astimezone(pytz.utc).strftime('%Y-%m-%dT%H:%M:%S.%fZ'))
 
     for user in plan.users_available:
         users[user]['calendar'] = users[user]['calendar'] - time_slots

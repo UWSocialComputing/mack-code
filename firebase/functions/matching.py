@@ -5,12 +5,14 @@ import random
 from datetime import datetime, timedelta
 import pytz
 import firebase_admin
+import pandas as pd
 from firebase_admin import firestore, credentials
+import networkx as nx
 
 # Use the application default credentials.
 cred = credentials.ApplicationDefault()
 
-firebase_admin.initialize_app(credentials.Certificate(''))
+firebase_admin.initialize_app(credentials.Certificate('/Users/corin1/capstone/version2/upload/service-key.json'))
 db = firestore.client()
 
 # Access Firestore client
@@ -65,37 +67,19 @@ def build_user_map():
     return user_map
 
 # Return all potential subsets of groupings / friend bubbles. Demonstrate which calendars to compare
-def find_friend_bubbles(users):
-    friend_bubbles = set()
-    # Define a helper function to perform depth-first search (DFS)
-    def dfs(user, bubble):
-        visited.add(user)
-        bubble.add(user)
-
-        if(check_validity(bubble, users)):
-            if(len(bubble) > 1):
-                friend_bubbles.add(frozenset(bubble))
-            
-        for friend in users[user]['friends']:
-            if friend not in visited:
-                dfs(friend, bubble)
-        
-        bubble.remove(user)
-
-    # Iterate through each user
-    for user in users:
-        visited = set()
-        bubble = set()
-        dfs(user, bubble)
-
-    return friend_bubbles
-
-def check_validity(bubble, users):
-    for u1 in bubble:
-        for u2 in bubble:
-            if u2 != u1 and u2 not in users[u1]['friends']:
-                return False
-    return True
+def find_cliques(users):
+    graph = nx.Graph()
+    cliques = []
+    for user, data in users.items():
+        friends = data['friends']
+        graph.add_node(user)
+        graph.add_edges_from([(user, friend) for friend in friends])
+    
+    for clique in nx.find_cliques(graph):
+        if len(clique) >= 2:
+            cliques.append(set(clique))
+    return cliques
+    
 
 # Match user availability of a single friend bubble
 def planned_times(users, friends):
@@ -191,19 +175,19 @@ def create_plan_timeslots():
     users = build_user_map()
 
     # Establish all the friend bubbles that exist
-    friend_bubbles = list(find_friend_bubbles(users))
+    cliques = find_cliques(users)
 
     plans = []
 
     # Randomize order of friend_bubbles
-    random.shuffle(friend_bubbles)
+    random.shuffle(cliques)
 
     # Iterate through all friend bubbles
-    for friend_bubble in friend_bubbles:
+    for friend_bubble in cliques:
         potential_plans = planned_times(users, friend_bubble)
 
         if len(potential_plans) == 0:
-            break
+            continue
 
         # Pick one plan for each friend bubble
         plan = potential_plans[0] 
@@ -214,5 +198,32 @@ def create_plan_timeslots():
         # users = update_users(users, plan)
 
     return plans
+def create_messages():
+    plans = create_plan_timeslots()
+    #update users database
 
-print(create_plan_timeslots())
+    activities_ref = list(firestore_client.collection('activities').stream())
+
+    activities_dict = list(map(lambda x: x.to_dict(), activities_ref))
+    df = pd.DataFrame(activities_dict)
+    messages_to_send = []
+
+
+    for plan in plans:
+        results = df.query("StartMinuteTime <= @plan.start_time_minutes and EndMinuteTime >= @plan.end_time_minutes and MinDuration <= @plan.duration and MaxDuration >= @plan.duration")
+        resultsToSend = results.sample(n=min(2, len(results)))
+        resultsToSendArr = resultsToSend.to_dict('records')
+
+        description = ""
+        
+        for result in resultsToSendArr:
+            
+            # description += 
+            description += result["Activity Name"] + "\n \n" + result["Description"] + "\n \n"
+        
+        header = "Here's some plans for " + plan.start_time.strftime("%m/%d at %I:%M %p") + " with group " + str(plan.users_available)
+
+        messages_to_send.append(header + "\n" + description)
+    return messages_to_send
+
+print(create_messages())

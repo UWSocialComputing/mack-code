@@ -11,7 +11,7 @@ from matching import create_plan_timeslots, build_user_map, find_friend_bubbles,
 import pandas as pd
 
 # The Cloud Functions for Firebase SDK to create Cloud Functions and set up triggers.
-from firebase_functions import https_fn, options
+from firebase_functions import https_fn, options, scheduler_fn
 
 # The Firebase Admin SDK to access Cloud Firestore.
 from firebase_admin import initialize_app, credentials, firestore
@@ -276,37 +276,36 @@ def getPlans(req: https_fn.Request) -> https_fn.Response:
    
     return https_fn.Response("hello world")
 
-    @scheduler_fn.on_schedule(schedule="every day 06:00")
-        def sendPlans(event: scheduler_fn.ScheduledEvent) -> None:
-            #array of final plans - start_time, end_time, duration, users
-            plans = create_plan_timeslots()
-            #update users database
+@scheduler_fn.on_schedule(schedule="every day 06:00")
+def sendPlans(event: scheduler_fn.ScheduledEvent) -> None:
+    #array of final plans - start_time, end_time, duration, users
+    plans = create_plan_timeslots()
+    #update users database
 
-            #find activities for each planned time
-            firestore_client: google.cloud.firestore.Client = firestore.client()
+    #find activities for each planned time
+    firestore_client: google.cloud.firestore.Client = firestore.client()
+    
+    activities_ref = list(firestore_client.collection('activities').stream())
+    
+    activities_dict = list(map(lambda x: x.to_dict(), activities_ref))
+    df = pd.DataFrame(activities_dict)
+    
+
+    for plan in plans:
+        results = df.query("'StartMinuteTime' <= @plan.start_time_minutes and 'EndMinuteTime' >= @plan.end_time_minutes and 'MinDuration' <= @plan.duration and 'MaxDuration' >= @plan.duration")
+        resultsToSend = results.sample(n=min(2, len(results)))
+        resultsToSendArr = resultsToSend.to_dict('records')
+
+        description = ""
+        
+        for result in resultsToSendArr:
             
-            activities_ref = list(firestore_client.collection('activities').stream()
-            
-            activities_dict = list(map(lambda x: x.to_dict(), activities_ref))
-            df = pd.DataFrame(activities_dict)
-            
+            # description += 
+            description += result["Activity Name"] + "\n \n" + result["Description"] + "\n \n"
+        
 
-            for plan in plans:
-                results = df.query("'StartMinuteTime' <= @plan.start_time_minutes and 'EndMinuteTime' >= @plan.end_time_minutes and 'MinDuration' <= @plan.duration and 'MaxDuration' >= @plan.duration")
-                resultsToSend = results.sample(n=min(2, len(results)))
-                resultsToSendArr = resultsToSend.to_dict('records')
+    #send twilio message
+        
 
-                description = ""
-                
-                for result in resultsToSendArr:
-                    
-                    description += 
-                    description += result["Activity Name"] + "\n \n" + result["Description"] + "\n \n"
-                
-
-            #send twilio message
-            
-
-     @scheduler_fn.on_schedule(schedule="every day 05:00")
-        def deleteAvailability(event: scheduler_fn.ScheduledEvent) -> None:
-
+# @scheduler_fn.on_schedule(schedule="every day 05:00")
+# def deleteAvailability(event: scheduler_fn.ScheduledEvent) -> None:

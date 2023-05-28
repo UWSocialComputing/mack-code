@@ -1,21 +1,20 @@
-
-import google.cloud.firestore
-import os
-import json
-
-import google.cloud.firestore
 import os
 import json
 import random
 
-from google.cloud import firestore
-from firebase_admin import initialize_app
-from firebase_admin import credentials
-from google.cloud import firestore
+from datetime import datetime, timedelta
+import pytz
+import firebase_admin
+from firebase_admin import firestore, credentials
 
+# Use the application default credentials.
+cred = credentials.ApplicationDefault()
+
+firebase_admin.initialize_app(credentials.Certificate('')) # to run this locally pass in the service key json file
+db = firestore.client()
 
 # Access Firestore client
-firestore_client: google.cloud.firestore.Client = firestore.client()
+firestore_client = firestore.client()
 
 # Define a function to retrieve data from Firestore and build the map
 def build_user_map():
@@ -25,16 +24,16 @@ def build_user_map():
     users_ref = firestore_client.collection('users')
     docs = users_ref.stream()
 
-    current_date = datetime.now()
+    current_date = pytz.timezone("America/Los_Angeles").localize(datetime.now())
 
     for doc in docs:
         
         # Access the fields of each document
         data = doc.to_dict()
         email = data['email']
-        friends = data['friends']
-        calendar = set(data['calendar'])
-        planTimes = set(data['planTimes'])
+        friends = data.get('friends', [])
+        calendar = set(data.get('calendar', []))
+        planTimes = set(data.get('planTimes', []))
         daysInAdvance = data['minNotice'] - 1 
 
         # Remove times that have already been marked as busy by a plan
@@ -44,7 +43,7 @@ def build_user_map():
         threshold_date = current_date + timedelta(days=daysInAdvance)
 
         # Convert the times from string format to datetime objects
-        calendar_obj = [datetime.fromisoformat(cal_str.replace('Z', '+00:00')) for cal_str in calendar]
+        calendar_obj = [datetime.fromisoformat(cal_str.replace('Z', '+00:00')).replace(tzinfo=pytz.timezone("America/Los_Angeles")) for cal_str in calendar]
 
         # Remove elements with a date less than the threshold date
         filtered_calendar = [time for time in calendar_obj if time >= threshold_date]
@@ -59,8 +58,8 @@ def build_user_map():
 
 # Return all potential subsets of groupings / friend bubbles. Demonstrate which calendars to compare
 def find_friend_bubbles(users):
-    visited = set()
     friend_bubbles = []
+    visited = set()
 
     # Define a helper function to perform depth-first search (DFS)
     def dfs(user, bubble):
@@ -160,7 +159,7 @@ def update_users(users, plan):
 
     time_strings = []
     for time in time_slots:
-        time_strings.append(my_datetime.strftime('%Y-%m-%dT%H:%M:%S.%fZ'))
+        time_strings.append(datetime.strftime('%Y-%m-%dT%H:%M:%S.%fZ'))
 
     for user in plan.users_available:
         users[user]['calendar'] = users[user]['calendar'] - time_slots
@@ -171,7 +170,7 @@ def update_users(users, plan):
             try:
                 plans = time_strings + users[user]['plannedTimes'] 
                 user_ref.set({
-                    planTimes: plans
+                    'planTimes': plans
                 })
                 print("Successfully update plans for " + user)
             except:
@@ -208,3 +207,17 @@ def create_plan_timeslots():
         users = update_users(users, plan)
 
     return plan
+
+# test
+# Build users list with preprocessed data
+users = build_user_map()
+
+# Establish all the friend bubbles that exist
+friend_bubbles = find_friend_bubbles(users)
+
+plans = []
+
+# Randomize order of friend_bubbles
+random.shuffle(friend_bubbles)
+
+print(friend_bubbles)

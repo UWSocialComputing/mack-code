@@ -37,6 +37,16 @@ class PlanTimeInterval:
         self.startTimeMinutes = startTimeMinutes
         self.endTimeMinutes = endTimeMinutes
     
+    def _init__(self, startTime, endTime, duration, startTimeMinutes, endTimeMinutes):
+        self.month = calendar.month_name[startTime.month]
+        self.day = startTime.day
+        self.dayOfWeek = calendar.day_name[startTime.weekday()]
+        self.startTime = startTime.strftime("%-I:%M %p")
+        self.endTime = endTime.strftime("%-I:%M %p")
+        self.duration = duration
+        self.startTimeMinutes = startTimeMinutes
+        self.endTimeMinutes = endTimeMinutes
+        
     def __str__(self):
         return str(self.month) + " " + str(self.day) + " " + str(self.day_of_week) + " " + str(self.time) + " " + str(self.duration)
     

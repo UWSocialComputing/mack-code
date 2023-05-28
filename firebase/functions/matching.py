@@ -32,7 +32,7 @@ def build_user_map():
     users_ref = firestore_client.collection('users')
     docs = users_ref.stream()
 
-    current_date = pytz.timezone("America/Los_Angeles").localize(datetime.now())
+    current_date = datetime.now(pytz.timezone('US/Pacific'))
 
     for doc in docs:
         
@@ -51,11 +51,11 @@ def build_user_map():
         threshold_date = current_date + timedelta(days=daysInAdvance)
 
         # Convert the times from string format to datetime objects
-        calendar_obj = [datetime.fromisoformat(cal_str.replace('Z', '+00:00')).replace(tzinfo=pytz.timezone("America/Los_Angeles")) for cal_str in calendar]
+        calendar_obj = [datetime.fromisoformat(cal_str.replace('Z', '+00:00')).astimezone(pytz.timezone('US/Pacific')) for cal_str in calendar]
 
         # Remove elements with a date less than the threshold date
         filtered_calendar = [time for time in calendar_obj if time >= threshold_date]
-
+        filtered_calendar.sort()
         # Build up the map of users to friends and date/time objects
         user_map[email] = {
             'friends': friends,

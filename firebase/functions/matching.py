@@ -10,7 +10,7 @@ from firebase_admin import firestore, credentials
 # Use the application default credentials.
 cred = credentials.ApplicationDefault()
 
-firebase_admin.initialize_app(credentials.Certificate('')) # to run this locally pass in the service key json file
+firebase_admin.initialize_app(credentials.Certificate(''))
 db = firestore.client()
 
 # Access Firestore client
@@ -58,39 +58,36 @@ def build_user_map():
 
 # Return all potential subsets of groupings / friend bubbles. Demonstrate which calendars to compare
 def find_friend_bubbles(users):
-    friend_bubbles = []
-    visited = set()
-
+    friend_bubbles = set()
     # Define a helper function to perform depth-first search (DFS)
     def dfs(user, bubble):
         visited.add(user)
         bubble.add(user)
 
+        if(check_validity(bubble)):
+            if(len(bubble) > 1):
+                friend_bubbles.add(frozenset(bubble))
+            
         for friend in users[user]['friends']:
             if friend not in visited:
                 dfs(friend, bubble)
+        
+        bubble.remove(user)
 
     # Iterate through each user
     for user in users:
-        if user not in visited:
-            bubble = set()
-            dfs(user, bubble)
-
-            # Check if all users within the bubble are friends with each other
-            is_bubble_valid = True
-            for u1 in bubble:
-                for u2 in bubble:
-                    if u2 != u1 and u2 not in users[u1]['friends']:
-                        is_bubble_valid = False
-                        break
-                if not is_bubble_valid:
-                    break
-
-            # Add the bubble to the list if it is valid
-            if is_bubble_valid:
-                friend_bubbles.append(bubble)
+        visited = set()
+        bubble = set()
+        dfs(user, bubble)
 
     return friend_bubbles
+
+def check_validity(bubble):
+    for u1 in bubble:
+        for u2 in bubble:
+            if u2 != u1 and u2 not in users[u1]['friends']:
+                return False
+    return True
 
 # Match user availability of a single friend bubble
 def planned_times(users, friends):
@@ -212,12 +209,19 @@ def create_plan_timeslots():
 # Build users list with preprocessed data
 users = build_user_map()
 
+for user in users:
+    print(user)
+    print(users[user]['friends'])
+    print("\n")
+
+print(">>>>>>>")
+
 # Establish all the friend bubbles that exist
-friend_bubbles = find_friend_bubbles(users)
+friend_bubbles = list(find_friend_bubbles(users))
+
+print(friend_bubbles)
 
 plans = []
 
 # Randomize order of friend_bubbles
 random.shuffle(friend_bubbles)
-
-print(friend_bubbles)

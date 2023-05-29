@@ -37,7 +37,6 @@ class LoginForm extends Component {
 
     // Set loading state to true
     this.setState({ isLoading: true });
-    alert("Trying to sign in");
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in 

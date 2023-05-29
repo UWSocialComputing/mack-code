@@ -58,4 +58,3 @@ class SearchResult extends Component {
 
 export default SearchResult;
 
-

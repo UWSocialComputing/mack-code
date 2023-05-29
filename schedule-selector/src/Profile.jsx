@@ -158,7 +158,6 @@ class SettingsForm extends Component {
       </p>
       </div>
       <div>
-        <SearchBar friends={this.state.friends} requestsSent={this.state.requestsSent} requestsRecieved={this.state.requestsRecieved}></SearchBar>
         <div className="columns-container" >
         <div className="column">
         <p style={{ fontSize: '25px'}}>Pending Friend Requests</p>
@@ -191,6 +190,10 @@ class SettingsForm extends Component {
         }
         </p>
         </ul>
+        </div>
+        <div className='column-right'>
+        <SearchBar friends={this.state.friends} requestsSent={this.state.requestsSent} requestsRecieved={this.state.requestsRecieved}></SearchBar>
+
         </div>
       </div>
       </div>

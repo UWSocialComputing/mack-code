@@ -8,23 +8,34 @@ import firebase_admin
 import pandas as pd
 from firebase_admin import firestore, credentials
 import networkx as nx
+from twilio.rest import Client
+
 
 # Use the application default credentials.
 cred = credentials.ApplicationDefault()
 
-firebase_admin.initialize_app(credentials.Certificate('/Users/corin1/capstone/version2/upload/service-key.json'))
+firebase_admin.initialize_app(credentials.Certificate('/Users/malisha/Documents/Programming/Friends2Meet/service-key.json'))
 db = firestore.client()
+
+account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
+auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
+
+client = Client(account_sid, auth_token)
+
+twilio_phone_num = '+18336857181'
+
 
 # Access Firestore client
 firestore_client = firestore.client()
 class PlanTimeInterval:
-    def __init__(self, start_time, start_time_minutes, end_time, end_time_minutes, duration, users_available):
+    def __init__(self, start_time, start_time_minutes, end_time, end_time_minutes, duration, users_available, users_numbers):
         self.start_time = start_time
         self.start_time_minutes = start_time_minutes
         self.end_time = end_time
         self.end_time_minutes = end_time_minutes
         self.duration = duration
         self.users_available = users_available
+        self.users_numbers = users_numbers
 
 # Define a function to retrieve data from Firestore and build the map
 def build_user_map():
@@ -45,6 +56,7 @@ def build_user_map():
         calendar = set(data.get('calendar', []))
         planTimes = set(data.get('planTimes', []))
         daysInAdvance = data['minNotice'] - 1 
+        phoneNumber  = data['phoneNum']
 
         # Remove times that have already been marked as busy by a plan
         calendar = calendar - planTimes
@@ -61,7 +73,9 @@ def build_user_map():
         # Build up the map of users to friends and date/time objects
         user_map[email] = {
             'friends': friends,
-            'calendar': filtered_calendar
+            'calendar': set(filtered_calendar),
+            'plannedTimes': planTimes,
+            'phoneNumber': phoneNumber
         }
 
     return user_map
@@ -128,13 +142,14 @@ def planned_times(users, friends):
                 end_time=end_time,
                 end_time_minutes=end_time_minutes,
                 duration=duration, 
-                users_available=users_available
+                users_available=users_available,
+                users_numbers= [users[user_id]['phoneNumber'] for user_id in users_available if user_id in users]
             )
             planned_times.append(planned_time)
 
         i += 1
     
-    planned_times.sort(key=lambda x: x.duration, reverse=True)
+    planned_times.sort(key=lambda x: x.duration / 30 + len(x.users_available) * 2, reverse=True)
     return planned_times
 
 def update_users(users, plan):
@@ -148,24 +163,27 @@ def update_users(users, plan):
         time_slots.add(current_time)
         current_time += timedelta(minutes=30)
 
-    time_strings = []
+    utc_timezone = pytz.timezone('UTC')
+
+    time_strings = set()
     for time in time_slots:
-        time_strings.append(datetime.astimezone(pytz.utc).strftime('%Y-%m-%dT%H:%M:%S.%fZ'))
+        utc_datetime = time.astimezone(utc_timezone)
+        time_strings.add(utc_datetime.strftime('%Y-%m-%dT%H:%M:%S.000Z'))
 
     for user in plan.users_available:
-        users[user]['calendar'] = users[user]['calendar'] - time_slots
+        users[user]['calendar'] = users[user]['calendar'] - time_strings
         
-        user_ref = firestore_client.collection('users').document(user)
-        doc = user_ref.get()
-        if doc.exists:
-            try:
-                plans = time_strings + users[user]['plannedTimes'] 
-                user_ref.set({
-                    'planTimes': plans
-                })
-                print("Successfully update plans for " + user)
-            except:
-                print("Error")
+        # user_ref = firestore_client.collection('users').document(user)
+        # doc = user_ref.get()
+        # if doc.exists:
+        #     try:
+        #         plans = time_strings + users[user]['plannedTimes'] 
+        #         user_ref.set({
+        #             'planTimes': plans
+        #         })
+        #         print("Successfully update plans for " + user)
+        #     except:
+        #         print("Error")
 
     return users
 
@@ -195,7 +213,7 @@ def create_plan_timeslots():
         plans.append(plan)
 
         # Update users to reflect planned times no longer available for each user in plan
-        # users = update_users(users, plan)
+        users = update_users(users, plan)
 
     return plans
 def create_messages():
@@ -222,8 +240,17 @@ def create_messages():
             description += result["Activity Name"] + "\n \n" + result["Description"] + "\n \n"
         
         header = "Here's some plans for " + plan.start_time.strftime("%m/%d at %I:%M %p") + " with group " + str(plan.users_available)
+        
+        message = header + "\n" + description
+        
+        for number in plan.users_numbers:
+            group_message = client.messages.create(
+                from_=twilio_phone_num,
+                body=message,
+                to='+1' + number
+            )
+        print(message)
 
-        messages_to_send.append(header + "\n" + description)
     return messages_to_send
 
 print(create_messages())

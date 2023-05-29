@@ -47,8 +47,6 @@ class LoginForm extends Component {
           loginError: false,
           redirectTo: '/calendar'
         });
-        alert("Login Success!");
-        console.log(userCredential);
       })
       .catch((error) => {
         this.setState({ loginError: true });

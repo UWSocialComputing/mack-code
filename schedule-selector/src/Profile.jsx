@@ -27,19 +27,27 @@ class SettingsForm extends Component {
   }
   
   componentDidMount() {
-    this.helper()
-  }
-
-  componentDidUpdate() {
-    this.helper()
-  }
-
-  helper() {
     if(auth.currentUser.email) {
       axios.get(getUserInfoUrl, { params: { email: auth.currentUser.email } })
       .then(response => {
         this.setState({
           daysInAdvanceValue: response.data.minNotice,
+          friends: response.data.friends,
+          requestsSent: response.data.requestsSent,
+          requestsRecieved: response.data.requestsRecieved
+        })
+      })
+      .catch(err => {
+        alert(err)
+      })
+    }
+  }
+
+  componentDidUpdate() {
+    if(auth.currentUser.email) {
+      axios.get(getUserInfoUrl, { params: { email: auth.currentUser.email } })
+      .then(response => {
+        this.setState({
           friends: response.data.friends,
           requestsSent: response.data.requestsSent,
           requestsRecieved: response.data.requestsRecieved
@@ -113,8 +121,17 @@ class SettingsForm extends Component {
         minNotice: this.state.daysInAdvanceValue
       };
       axios.post(editSettingsUrl, request, {headers: {'Content-Type': 'application/json'}})
-      .then(data => alert("successfully updated your profile settings"))
+      .then()
       .catch(err => alert(err));
+      axios.get(getUserInfoUrl, { params: { email: auth.currentUser.email } })
+        .then(response => {
+          this.setState({
+            daysInAdvanceValue: response.data.minNotice,
+          })
+        })
+        .catch(err => {
+          alert(err)
+        })
     }
   }
 

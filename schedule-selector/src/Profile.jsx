@@ -23,7 +23,7 @@ const auth = getAuth(firebaseApp);
 class SettingsForm extends Component {
   constructor(props) {
     super(props);
-    this.state = { maxHangoutValue: 1, daysInAdvanceValue: 1, friends: [], requestsSent: [], requestsRecieved: []};
+    this.state = { friends: [], requestsSent: [], requestsRecieved: []};
   }
   
   componentDidMount() {
@@ -92,80 +92,15 @@ class SettingsForm extends Component {
     }
   }
 
-  handleDaysChange = (e) => {
-    let { value } = e.target;
-    value = parseInt(value);
-
-    if (isNaN(value)) {
-        value = 1;
-    } else if (value < 1) {
-        value = 1;
-    }
-    this.setState({daysInAdvanceValue: value});
-  }
-    
-  handleMaxPlansChange = (e) => {
-    let { value } = e.target;
-    value = parseInt(value);
-
-    if (isNaN(value)) {
-        value = 1;
-    } else if (value < 1) {
-        value = 1;
-    }
-    this.setState({maxHangoutValue: value});
-  }
-
-
-  handleSubmit = (e) => {
-    e.preventDefault()
-    if(auth.currentUser.email) {
-      const request = {
-        email: auth.currentUser.email,
-        maxPlans: this.state.maxHangoutValue,
-        minNotice: this.state.daysInAdvanceValue
-      };
-      axios.post(editSettingsUrl, request, {headers: {'Content-Type': 'application/json'}})
-      .then(data => alert("successfully updated your profile settings"))
-      .catch(err => alert(err));
-    }
-  }
-
   render() {
     return (
       <div>
       <div style={{marginLeft:'2%', marginRight:'2%', borderTop: '1px solid black', width: '95%', display: 'flex', justifyContent: 'space-between' }}></div>
       <div style={{marginLeft: '2%'}}><p>
       <h2>Welcome to your profile page: {auth.currentUser.email}</h2>
-      <form onSubmit={this.handleSubmit}>
-        <div>
-          <label htmlFor="maxHangoutValue">Up to how many plans would you want to receive? :</label>
-          <input
-            type="number"
-            id="maxHangoutValue"
-            name="maxHangoutValue"
-            value={this.state.maxHangoutValue}
-            style={{ width: '50px' }}
-            onChange={this.handleMaxPlansChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="daysInAdvance">What's the minimum number of days you want to receive a plan's notice? </label>
-          <input
-            type="number"
-            id="daysInAdvance"
-            name="daysInAdvance"
-            value={this.state.daysInAdvanceValue}
-            style={{ width: '50px' }}
-            onChange={this.handleDaysChange}
-          />
-        </div>
-        <button className="rectangle-button blue" type="submit">Submit</button>
-      </form>
       </p>
       </div>
       <div>
-        <SearchBar friends={this.state.friends} requestsSent={this.state.requestsSent} requestsRecieved={this.state.requestsRecieved}></SearchBar>
         <div className="columns-container" >
         <div className="column">
         <p style={{ fontSize: '25px'}}>Pending Friend Requests</p>
@@ -199,6 +134,10 @@ class SettingsForm extends Component {
         </p>
         </ul>
         </div>
+        <div className='column-right'>
+        <SearchBar friends={this.state.friends} requestsSent={this.state.requestsSent} requestsRecieved={this.state.requestsRecieved}></SearchBar>
+
+        </div>
       </div>
       </div>
       </div>
@@ -218,3 +157,4 @@ function Profile() {
 
 export default Profile;
     
+

@@ -30,9 +30,6 @@ class Home extends React.Component {
           schedule : response.data.calendar
         })
       })
-      .catch(err => {
-        alert(err)
-      })
     }
   }
 

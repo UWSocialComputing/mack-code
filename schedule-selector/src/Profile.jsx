@@ -23,7 +23,7 @@ const auth = getAuth(firebaseApp);
 class SettingsForm extends Component {
   constructor(props) {
     super(props);
-    this.state = { maxHangoutValue: 1, daysInAdvanceValue: 1, friends: [], requestsSent: [], requestsRecieved: []};
+    this.state = { daysInAdvanceValue: 0, friends: [], requestsSent: [], requestsRecieved: []};
   }
   
   componentDidMount() {
@@ -39,7 +39,6 @@ class SettingsForm extends Component {
       axios.get(getUserInfoUrl, { params: { email: auth.currentUser.email } })
       .then(response => {
         this.setState({
-          maxHangoutValue: response.data.maxPlans,
           daysInAdvanceValue: response.data.minNotice,
           friends: response.data.friends,
           requestsSent: response.data.requestsSent,
@@ -97,24 +96,13 @@ class SettingsForm extends Component {
     value = parseInt(value);
 
     if (isNaN(value)) {
-        value = 1;
-    } else if (value < 1) {
-        value = 1;
+        value = 0;
+    } else if (value < 0) {
+        value = 0;
     }
     this.setState({daysInAdvanceValue: value});
   }
     
-  handleMaxPlansChange = (e) => {
-    let { value } = e.target;
-    value = parseInt(value);
-
-    if (isNaN(value)) {
-        value = 1;
-    } else if (value < 1) {
-        value = 1;
-    }
-    this.setState({maxHangoutValue: value});
-  }
 
 
   handleSubmit = (e) => {
@@ -122,7 +110,6 @@ class SettingsForm extends Component {
     if(auth.currentUser.email) {
       const request = {
         email: auth.currentUser.email,
-        maxPlans: this.state.maxHangoutValue,
         minNotice: this.state.daysInAdvanceValue
       };
       axios.post(editSettingsUrl, request, {headers: {'Content-Type': 'application/json'}})
@@ -138,17 +125,6 @@ class SettingsForm extends Component {
       <div style={{marginLeft: '2%'}}><p>
       <h2>Welcome to your profile page: {auth.currentUser.email}</h2>
       <form onSubmit={this.handleSubmit}>
-        <div>
-          <label htmlFor="maxHangoutValue">Up to how many plans would you want to receive? :</label>
-          <input
-            type="number"
-            id="maxHangoutValue"
-            name="maxHangoutValue"
-            value={this.state.maxHangoutValue}
-            style={{ width: '50px' }}
-            onChange={this.handleMaxPlansChange}
-          />
-        </div>
         <div>
           <label htmlFor="daysInAdvance">What's the minimum number of days you want to receive a plan's notice? </label>
           <input

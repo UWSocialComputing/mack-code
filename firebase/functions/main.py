@@ -5,7 +5,6 @@
 import json
 import os
 import google.cloud.firestore
-from dotenv import load_dotenv
 # The Cloud Functions for Firebase SDK to create Cloud Functions and set up triggers.
 from firebase_functions import https_fn, options, scheduler_fn
 
@@ -15,21 +14,19 @@ from firebase_admin import firestore, initialize_app, credentials
 import random
 from datetime import datetime, timedelta
 import pytz
-import os
 import pandas as pd
 from firebase_admin import firestore, credentials
 import networkx as nx
 from twilio.rest import Client
+from decouple import config
 
 
 twilio_phone_num = '+18336857181'
 
-load_dotenv()
 cred = credentials.ApplicationDefault()
 app = initialize_app(cred)
-
-account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
-auth_token =  os.environ.get('TWILIO_AUTH_TOKEN')
+account_sid = config('TWILIO_ACCOUNT_SID')
+auth_token =  config('TWILIO_AUTH_TOKEN')
 twilio_client = Client(account_sid, auth_token)
 
 
@@ -226,14 +223,14 @@ def addUserInfo(req: https_fn.Request) -> https_fn.Response:
 @https_fn.on_request(cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post"]))
 def getPlans(req: https_fn.Request) -> https_fn.Response:
     firestore_client: google.cloud.firestore.Client = firestore.client()
-    create_plan_timeslots(account_sid, auth_token, firestore_client)
+    create_plan_timeslots(firestore_client)
     return https_fn.Response("success")
     
 
 @scheduler_fn.on_schedule(schedule="every day 06:00")
 def sendPlans(event: scheduler_fn.ScheduledEvent) -> None:
     firestore_client: google.cloud.firestore.Client = firestore.client()
-    create_plan_timeslots(account_sid, auth_token, firestore_client)
+    create_plan_timeslots(firestore_client)
 
                     
 # utility functions for matching that unfortunately can't be in a different file because firebase has issues
@@ -385,21 +382,21 @@ def update_users(users, plan, firestore_client):
         user_ref = firestore_client.collection('users').document(user)
         doc = user_ref.get()
         if doc.exists:           
-            plans = time_strings + users[user]['plannedTimes'] 
+            plans = users[user].get('plannedTimes', [])
+            plans.update(time_strings)
             user_ref.set({
                 'planTimes': plans
             })
             
-
     return users
 
 # Potentially putting it all together
 def create_plan_timeslots(firestore_client):
     # Build users list with preprocessed data
-    users = build_user_map()
+    users = build_user_map(firestore_client)
 
     # Establish all the friend bubbles that exist
-    cliques = find_cliques(users, firestore_client)
+    cliques = find_cliques(users)
 
     # Randomize order of friend_bubbles
     random.shuffle(cliques)

@@ -3,7 +3,6 @@
 # Deploy with `firebase deploy`
 
 import json
-import os
 import google.cloud.firestore
 # The Cloud Functions for Firebase SDK to create Cloud Functions and set up triggers.
 from firebase_functions import https_fn, options, scheduler_fn
@@ -262,7 +261,7 @@ def build_user_map(firestore_client):
         friends = data.get('friends', [])
         calendar = set(data.get('calendar', []))
         planTimes = set(data.get('planTimes', []))
-        daysInAdvance = data['minNotice'] - 1 
+        daysInAdvance = data.get('minNotice', 0)
         phoneNum  = data['phoneNum']
 
         # Remove times that have already been marked as busy by a plan
@@ -385,8 +384,8 @@ def update_users(users, plan, firestore_client):
             plans = users[user].get('plannedTimes', [])
             plans.update(time_strings)
             user_ref.set({
-                'planTimes': plans
-            })
+                    'planTimes': plans
+                }, merge=True)
             
     return users
 

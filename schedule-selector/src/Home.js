@@ -38,7 +38,6 @@ class Home extends React.Component {
 
   handleDateChange = (date) => {
     // Perform any necessary actions with the updated date
-    console.log('Updated date:', date);
     this.setState({ date: date})
   };
 

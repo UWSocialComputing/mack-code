@@ -8,7 +8,7 @@ from twilio.rest import Client
 from decouple import config
 
 
-twilio_phone_num = '+18336857181'
+twilio_phone_num = '+18667065342' 
 
 account_sid = config('TWILIO_ACCOUNT_SID')
 auth_token =  config('TWILIO_AUTH_TOKEN')

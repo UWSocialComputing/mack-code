@@ -43,6 +43,7 @@ class SearchBar extends Component {
                 querySnapshot.forEach((doc) => {
                     const email = doc.data().email
                     if(!(email === auth.currentUser.email || this.props.friends.includes(email) || this.props.requestsSent.includes(email) || this.props.requestsRecieved.includes(email))) {
+                        console.log(doc.data);
                         results.push(doc.data().email);
                     }
                 });
@@ -86,4 +87,3 @@ class SearchBar extends Component {
 }
 
 export default SearchBar;
-

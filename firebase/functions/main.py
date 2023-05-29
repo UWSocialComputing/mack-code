@@ -140,11 +140,10 @@ def editSettings(req: https_fn.Request) -> https_fn.Response:
         doc = user_ref.get()
         if doc.exists:
             try:
-                for setting in ['maxPlans', 'minNotice']:
-                    if setting in json_data:
-                        user_ref.set({
-                            setting: json_data[setting]
-                        }, merge=True)
+                if 'minNotice' in json_data:
+                    user_ref.set({
+                        'minNotice': json_data['minNotice']
+                    }, merge=True)
                 return https_fn.Response("successfully updated settings")
             except:
                 raise https_fn.HttpsError('internal', 'failed to change settings in database')
@@ -177,8 +176,7 @@ def getUserInfo(req: https_fn.Request) -> https_fn.Response:
         doc = user_ref.get()
         doc_as_dict = doc.to_dict()
         userInfo = {
-            'maxPlans' : doc_as_dict.get('maxPlans', 1),
-            'minNotice' : doc_as_dict.get('minNotice', 1),
+            'minNotice' : doc_as_dict.get('minNotice', 0),
             'friends' : doc_as_dict.get('friends', []),
             'requestsSent' : doc_as_dict.get('requestsSent', []),
             'requestsRecieved' : doc_as_dict.get('requestsRecieved',[])
@@ -212,8 +210,7 @@ def addUserInfo(req: https_fn.Request) -> https_fn.Response:
             'username' : username,
             'phoneNum' : phoneNum,
             'email' : email,
-            'maxPlans' : 1,
-            'minNotice' : 1,
+            'minNotice' : 0,
             'friends' : [],
             'requestsSent' : [],
             'requestsRecieved' : [],

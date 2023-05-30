@@ -19,8 +19,18 @@ const editCalendarUrl='https://editavailabilityforuser-7g4ibqksta-uc.a.run.app'
 
 const getCalendarUrl='https://getavailabilityforuser-7g4ibqksta-uc.a.run.app'
 
+const currentDate = new Date();
+const currentDayOfWeek = currentDate.getDay(); // 0 (Sunday) to 6 (Saturday)
+
+const daysToSunday = currentDayOfWeek === 0 ? 7 : currentDayOfWeek; // Calculate the number of days from the current day to the previous Sunday
+const previousSunday = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - daysToSunday);
+
+const previousSundayString = previousSunday.toISOString().slice(0, 10);
+
+
+
 class Home extends React.Component {
-  state = { schedule : [], start : 8, end: 22, date : '5/21/23'}
+  state = { schedule : [], start : 8, end: 22, date : previousSunday}
 
   componentDidMount() {
     if(auth.currentUser.email) {
@@ -30,15 +40,11 @@ class Home extends React.Component {
           schedule : response.data.calendar
         })
       })
-      .catch(err => {
-        alert(err)
-      })
     }
   }
 
   handleDateChange = (date) => {
     // Perform any necessary actions with the updated date
-    console.log('Updated date:', date);
     this.setState({ date: date})
   };
 
@@ -75,7 +81,7 @@ class Home extends React.Component {
           </div>
           
         </div>
-        <div style={{marginLeft:'2%', marginRight:'2%',}}><p><DateInput initialDate="2023-05-21" onDateChange={this.handleDateChange} /></p></div>
+        <div style={{marginLeft:'2%', marginRight:'2%',}}><p><DateInput initialDate={previousSundayString} onDateChange={this.handleDateChange} /></p></div>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         </div>       
         <div className="container">

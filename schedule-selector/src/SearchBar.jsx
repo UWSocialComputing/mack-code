@@ -11,7 +11,6 @@ const config = getFirebaseConfig;
 const firebaseApp = firebase.initializeApp(config);
 const auth = getAuth(firebaseApp);
 
-
 class SearchBar extends Component {
     constructor(props) {
       super(props);
@@ -68,7 +67,7 @@ class SearchBar extends Component {
             />
             <button style={{ fontSize: '15px', padding: '10px 20px' }} className="bg-white p-4">🔍</button>
         </div>
-        <div className="container">
+        <div>
             {searchResults.length > 0 ? (
             <div>
                 <ul>

@@ -45,7 +45,8 @@ class SearchResult extends Component {
     if(!isPending) {
       return (
           <div>
-            <p>
+            <p> </p>
+            <p style={{display:'block'}}>
             <span>{email}</span>
             <button className="add-button" onClick={this.handleAddFriend}>Add Friend</button>
             </p>
@@ -56,3 +57,4 @@ class SearchResult extends Component {
 }
 
 export default SearchResult;
+

@@ -42,8 +42,6 @@ class SignUpForm extends Component {
     createUserWithEmailAndPassword(auth, p_email, p_password)
     .then((userRecord) => {
         // See the UserRecord reference doc for the contents of userRecord.
-        alert('Successfully created new user:', userRecord.uid);
-        // console.log(auth.currentUser);
         axios.post(url, {
             user: auth.currentUser,
             email: p_email,
@@ -52,9 +50,7 @@ class SignUpForm extends Component {
         },
         {'Content-Type': 'application/json'})
         .then((userRecord) => {
-          alert("successfully added to db");
         }).catch((error) => {
-          alert("failed to add to db")
         })
         this.setState({
           username: '',
@@ -127,6 +123,7 @@ class SignUpForm extends Component {
             className="custom-input"
           />
         </div>
+        <div> <label> <input type="checkbox" required/> by checking this box you agree to receive texts from Friend2Meet </label></div>
         <button className="button button-primary" type="submit">Sign Up</button>
       </form>
     </div>

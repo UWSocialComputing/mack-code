@@ -37,7 +37,6 @@ class LoginForm extends Component {
 
     // Set loading state to true
     this.setState({ isLoading: true });
-    alert("Trying to sign in");
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in 
@@ -48,8 +47,6 @@ class LoginForm extends Component {
           loginError: false,
           redirectTo: '/calendar'
         });
-        alert("Login Success!");
-        console.log(userCredential);
       })
       .catch((error) => {
         this.setState({ loginError: true });

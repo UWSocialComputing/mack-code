@@ -201,6 +201,7 @@ def addUserInfo(req: https_fn.Request) -> https_fn.Response:
         }
         try:
             firestore_client.collection('users').document(email).set(newUser)
+            matching.send_welcome_message(phoneNum)
             return https_fn.Response("success")
         except:
             raise https_fn.HttpsError('internal', 'failed to add to database')
@@ -224,3 +225,4 @@ def sendPlans(event: scheduler_fn.ScheduledEvent) -> None:
 def clean_users_availability(event: scheduler_fn.ScheduledEvent) -> None:
     firestore_client: google.cloud.firestore.Client = firestore.client()
     matching.clean_users_availability(firestore_client)
+    matching.remind_users(firestore_client)

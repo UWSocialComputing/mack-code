@@ -253,3 +253,25 @@ def create_plan_timeslots(firestore_client):
 
         # Update users to reflect planned times no longer available for each user in plan
         users = update_users(users, plan, firestore_client)            
+
+def remind_users(firestore_client):
+    
+    users = build_user_map(firestore_client)
+
+    message = "Hello hello. Don't forget to update your availabilities on Friends2Meet! \n https://friendstomeet-155ac.web.app/https://friendstomeet-155ac.web.app/"
+    for user in users:
+        formatted_number = "+1" + user['phoneNum']
+        twilio_client.messages.create (
+            body=message,
+            from_=twilio_phone_num,
+            to=formatted_number
+        )
+
+def send_welcome_message(phoneNumber):
+    message = "Hiya. Welcome to Friends2Meet. Input your availabilities, add your friends, and we'll send you personalized plans! \n https://friendstomeet-155ac.web.app/https://friendstomeet-155ac.web.app/"
+    formatted_number = "+1" + user['phoneNum']
+    twilio_client.messages.create (
+        body=message,
+        from_=twilio_phone_num,
+        to=formatted_number
+    )

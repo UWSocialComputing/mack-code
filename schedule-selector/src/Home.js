@@ -25,7 +25,8 @@ const currentDayOfWeek = currentDate.getDay(); // 0 (Sunday) to 6 (Saturday)
 const daysToSunday = currentDayOfWeek === 0 ? 7 : currentDayOfWeek; // Calculate the number of days from the current day to the previous Sunday
 const previousSunday = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - daysToSunday);
 
-const previousSundayString = previousSunday.toLocaleDateString('en-US');
+const previousSundayString = previousSunday.toISOString().slice(0, 10);
+
 
 
 class Home extends React.Component {

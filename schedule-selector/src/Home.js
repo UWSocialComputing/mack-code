@@ -57,6 +57,7 @@ class Home extends React.Component {
     const email = auth.currentUser.email
     if(email && this.state.schedule) {
       axios.post(editCalendarUrl, {email: email,'calendar': this.state.schedule}, {headers: {'Content-Type': 'application/json'}})
+      .then(data => alert("successfully updated your availability"))
       .catch(err => alert(err))
     }
   }

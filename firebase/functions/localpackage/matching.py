@@ -24,6 +24,12 @@ class PlanTimeInterval:
         self.duration = duration
         self.users_available = users_available
 
+    def planStr(self, user): 
+        return "Hey. Friends2Meet here! Looks like you and your friends " + str(self.users_available - set([user])) 
+        + " are free on " + str(self.month) + "/" + str(self.day) 
+        + " from " + self.start_time.strftime("%m/%d at %I:%M %p") + " to " + self.start_time.strftime("%m/%d at %I:%M %p")
+        + ". Here are somes ideas for what to do. "
+
 # Define a function to retrieve data from Firestore and build the map
 def build_user_map(firestore_client):
     user_map = {}
@@ -206,7 +212,7 @@ def create_plan_timeslots(firestore_client):
             description += result["Activity Name"] + "\n" + result["Description"] + "\n \n"
         
         for user in plan.users_available:
-            header = "Here's some plans for " + plan.start_time.strftime("%m/%d at %I:%M %p") + " with friends " + str(plan.users_available - set([user]))
+            header = plan.planStr(user)
         
             message = header + "\n" + description
             formatted_number = "+1" + users[user]['phoneNum']

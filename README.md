@@ -1,5 +1,6 @@
 This app is hosted at https://friendstomeet-155ac.web.app/
 The frontend is in `/schedule-selector` and the backend is in `/firebase/functions`
+The firebase functions are in `/firebase/functions/main.py` and the core logic for matching friend's availability is in `/firebase/functions/localpackage/matching.py`
 
 To clone and run this code, you must have your own firebase account. 
 Enter into a directory and run `firebase login` and  `firebase init`, you must also create your own firebase config files using the API keys in your firebase account. 

@@ -203,7 +203,7 @@ def create_plan_timeslots(firestore_client):
         description = ""
         
         for result in resultsToSendArr:
-            description += result["Activity Name"] + "\n \n" + result["Description"] + "\n \n"
+            description += result["Activity Name"] + "\n" + result["Description"] + "\n \n"
         
         for user in plan.users_available:
             header = "Here's some plans for " + plan.start_time.strftime("%m/%d at %I:%M %p") + " with friends " + str(plan.users_available - set([user]))

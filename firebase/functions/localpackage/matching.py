@@ -78,6 +78,7 @@ def clean_users_availability(firestore_client):
     current_date = datetime.now(pytz.timezone('US/Pacific'))
 
     for doc in docs:
+        data = doc.to_dict()
         calendar = set(data.get('calendar', []))
         plans = set(data.get('planTimes', []))
 
@@ -86,16 +87,15 @@ def clean_users_availability(firestore_client):
 
         # Convert the times from string format to datetime objects
         calendar_obj = [datetime.fromisoformat(cal_str.replace('Z', '+00:00')).astimezone(pytz.timezone('US/Pacific')) for cal_str in calendar]
-        plans_obj = [datetime.fromisoformat(cal_str.replace('Z', '+00:00')).astimezone(pytz.timezone('US/Pacific')) for plan_str in plans]
+        plans_obj = [datetime.fromisoformat(plan_str.replace('Z', '+00:00')).astimezone(pytz.timezone('US/Pacific')) for plan_str in plans]
 
         # Remove elements with a date less than the threshold date
         filtered_calendar = [time for time in calendar_obj if time >= threshold_date]
         filtered_plans = [time for time in plans_obj if time >= threshold_date]
 
-        cal_strings = [date.astimezone(la_timezone).strftime('%Y-%m-%dT%H:%M:%S.000Z') for date in filtered_calendar]
-        plans_strings = [date.astimezone(la_timezone).strftime('%Y-%m-%dT%H:%M:%S.000Z') for date in filtered_plans]
-
-        user_ref.set({
+        cal_strings = [date.astimezone(pytz.timezone('US/Pacific')).strftime('%Y-%m-%dT%H:%M:%S.000Z') for date in filtered_calendar]
+        plans_strings = [date.astimezone(pytz.timezone('US/Pacific')).strftime('%Y-%m-%dT%H:%M:%S.000Z') for date in filtered_plans]
+        users_ref.document(data["email"]).set({
             'calendar': cal_strings,
             'planTimes': plans_strings
         }, merge=True)        

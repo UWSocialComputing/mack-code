@@ -25,10 +25,7 @@ class PlanTimeInterval:
         self.users_available = users_available
 
     def planStr(self, user): 
-        return "Hey. Friends2Meet here! Looks like you and your friends " + str(self.users_available - set([user])) 
-        + " are free on " + str(self.month) + "/" + str(self.day) 
-        + " from " + self.start_time.strftime("%m/%d at %I:%M %p") + " to " + self.start_time.strftime("%m/%d at %I:%M %p")
-        + ". Here are somes ideas for what to do. "
+        return "Hey. Friends2Meet here! Looks like you and your friends " + str(self.users_available - set([user])) + " are free on " + str(self.month) + "/" + str(self.day) + " from " + self.start_time.strftime("%m/%d at %I:%M %p") + " to " + self.start_time.strftime("%m/%d at %I:%M %p") + ". Here are somes ideas for what to do. "
 
 # Define a function to retrieve data from Firestore and build the map
 def build_user_map(firestore_client):

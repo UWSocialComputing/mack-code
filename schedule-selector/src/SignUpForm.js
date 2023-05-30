@@ -123,7 +123,7 @@ class SignUpForm extends Component {
             className="custom-input"
           />
         </div>
-        <div> <label> <input type="checkbox" required/> by checking this box you agree to receive texts from FriendToMeet </label></div>
+        <div> <label> <input type="checkbox" required/> by checking this box you agree to receive texts from Friend2Meet </label></div>
         <button className="button button-primary" type="submit">Sign Up</button>
       </form>
     </div>

@@ -82,23 +82,27 @@ def clean_users_availability(firestore_client):
 
     for doc in docs:
         calendar = set(data.get('calendar', []))
+        plans = set(data.get('planTimes', []))
 
         # Remove times that are before today
         threshold_date = current_date
 
         # Convert the times from string format to datetime objects
         calendar_obj = [datetime.fromisoformat(cal_str.replace('Z', '+00:00')).astimezone(pytz.timezone('US/Pacific')) for cal_str in calendar]
+        plans_obj = [datetime.fromisoformat(cal_str.replace('Z', '+00:00')).astimezone(pytz.timezone('US/Pacific')) for plan_str in plans]
 
         # Remove elements with a date less than the threshold date
         filtered_calendar = [time for time in calendar_obj if time >= threshold_date]
+        filtered_plans = [time for time in plans_obj if time >= threshold_date]
 
-        iso_strings = [date.astimezone(la_timezone).strftime('%Y-%m-%dT%H:%M:%S.000Z') for date in filtered_calendar]
+        cal_strings = [date.astimezone(la_timezone).strftime('%Y-%m-%dT%H:%M:%S.000Z') for date in filtered_calendar]
+        plans_strings = [date.astimezone(la_timezone).strftime('%Y-%m-%dT%H:%M:%S.000Z') for date in filtered_plans]
 
         user_ref.set({
-            'calendar': iso_strings
+            'calendar': cal_strings,
+            'planTimes': plans_strings
         }, merge=True)        
         
-
 
 # Return all potential subsets of groupings / friend bubbles. Demonstrate which calendars to compare
 def find_cliques(users):

@@ -73,6 +73,33 @@ def build_user_map(firestore_client):
 
     return user_map
 
+def clean_users_availability(firestore_client):
+    # Retrieve all documents from the Firestore collection
+    users_ref = firestore_client.collection('users')
+    docs = users_ref.stream()
+
+    current_date = datetime.now(pytz.timezone('US/Pacific'))
+
+    for doc in docs:
+        calendar = set(data.get('calendar', []))
+
+        # Remove times that are before today
+        threshold_date = current_date
+
+        # Convert the times from string format to datetime objects
+        calendar_obj = [datetime.fromisoformat(cal_str.replace('Z', '+00:00')).astimezone(pytz.timezone('US/Pacific')) for cal_str in calendar]
+
+        # Remove elements with a date less than the threshold date
+        filtered_calendar = [time for time in calendar_obj if time >= threshold_date]
+
+        iso_strings = [date.astimezone(la_timezone).strftime('%Y-%m-%dT%H:%M:%S.000Z') for date in filtered_calendar]
+
+        user_ref.set({
+            'calendar': iso_strings
+        }, merge=True)        
+        
+
+
 # Return all potential subsets of groupings / friend bubbles. Demonstrate which calendars to compare
 def find_cliques(users):
     graph = nx.Graph()

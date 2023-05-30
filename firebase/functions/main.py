@@ -223,4 +223,7 @@ def sendPlans(event: scheduler_fn.ScheduledEvent) -> None:
     firestore_client: google.cloud.firestore.Client = firestore.client()
     matching.create_plan_timeslots(firestore_client)
 
-                    
+@scheduler_fn.on_schedule(schedule="59 23 * * 6")
+def clean_users_availability(event: scheduler_fn.ScheduledEvent) -> None:
+    firestore_client: google.cloud.firestore.Client = firestore.client()
+    matching.clean_users_availability(firestore_client)

@@ -143,7 +143,7 @@ class SettingsForm extends Component {
       <h2>Welcome to your profile page: {auth.currentUser.email}</h2>
       <form onSubmit={this.handleSubmit}>
         <div>
-          <label htmlFor="daysInAdvance">What's the minimum number of days in advance you want to receive a plan's notice? </label>
+          <label htmlFor="daysInAdvance">What's the minimum number of days in advance you want to be notified about a plan? </label>
           <input
             type="number"
             id="daysInAdvance"
